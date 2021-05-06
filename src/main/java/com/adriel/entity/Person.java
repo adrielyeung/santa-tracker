@@ -34,7 +34,7 @@ public class Person extends SantaTrackerEntity {
 	private String resetPasswordToken;
 	private String adminToken;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "customer")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "person")
 	private List<Order> personOrders = new ArrayList<Order>();
 	
 	public Person() {
@@ -124,7 +124,7 @@ public class Person extends SantaTrackerEntity {
 	
 	public void addOrder(Order ord) {
 		this.personOrders.add(ord);
-		ord.setCustomer(this);
+		ord.setPerson(this);
 	}
 
 	@Override

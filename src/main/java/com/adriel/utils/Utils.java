@@ -9,6 +9,8 @@ import com.adriel.entity.Person;
 
 public class Utils {
 	
+	private Utils() {}
+	
 	public static String generateRandomAlphanumericString(int length) {
 	    int leftLimit = 48; // numeral '0'
 	    int rightLimit = 122; // letter 'z'
@@ -37,16 +39,21 @@ public class Utils {
 		String repword_inp = req.getParameter("repsw");
 		HttpSession personCurSess = req.getSession();
 		if (!person.getPword().equals(repword_inp)) {
-			errMsg = "The two passwords entered do not match.";
+			errMsg = ConstStrings.PWD_NOT_MATCH;
 			personCurSess.setAttribute("uname_reg", person.getUsername());
 			personCurSess.setAttribute("email_reg", person.getEmail());
 			personCurSess.setAttribute("addr_reg", person.getAddress());
 		} else if (person.getPword().length() < 5) {
-			errMsg = "Password must be 5 characters or above.";
+			errMsg = ConstStrings.PWD_LENGTH;
 			personCurSess.setAttribute("uname_reg", person.getUsername());
 			personCurSess.setAttribute("email_reg", person.getEmail());
 			personCurSess.setAttribute("addr_reg", person.getAddress());
 		}
 		return errMsg;
+		
+	}
+	
+	public static boolean isLoggedOut(HttpServletRequest req) {
+		return ((Person) req.getSession().getAttribute("personLoggedIn")) == null;
 	}
 }

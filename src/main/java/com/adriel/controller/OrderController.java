@@ -19,11 +19,11 @@ public class OrderController {
 	
 	@RequestMapping(value="/app/order", method=RequestMethod.GET)
 	public String goToOrderPage(HttpServletRequest req, HttpServletResponse resp) {
-		HttpSession custCurSess = req.getSession();
+		HttpSession personCurSess = req.getSession();
 		
-		List<Order> custOrd = (List<Order>) custCurSess.getAttribute("custOrd");
+		List<Order> personOrd = (List<Order>) personCurSess.getAttribute("personOrd");
 		
-		if (custOrd != null) {
+		if (personOrd != null) {
 			return "App/order";
 		} else {
 			req.getSession().setAttribute("errMsg", "Session has expired. Please login again.");

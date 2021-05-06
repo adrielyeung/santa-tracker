@@ -178,9 +178,8 @@ img.avatar {
 <div class="topnav">
   <a href="/app/dashboard">Home</a>
   <a href="/app/order">Orders</a>
-  <a href="/app/message">Messages</a>
   <a href="/logout">Logout</a>
-  <a>Welcome back, ${uname}!</a>
+  <a>Welcome back, ${personLoggedIn.username}!</a>
 </div>
 
 <div class="content">
@@ -199,7 +198,7 @@ img.avatar {
 	    <th class="tg-0lax">OrderID</th>
 	  </tr>
   </thead>
-  <c:forEach items="${custMsg}" var="msg">
+  <c:forEach items="${personMsg}" var="msg">
 	  <tr>
 	    <td class="tg-0lax"><a href="/app/msgdet/${msg.messageID}">${msg.messageID}</a></td>
 	    <td class="tg-0lax"><javatime:format value="${msg.sentTime}" style="SS"/></td>
