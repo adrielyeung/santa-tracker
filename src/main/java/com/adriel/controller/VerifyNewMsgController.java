@@ -57,7 +57,7 @@ public class VerifyNewMsgController {
 			} catch (ResourceNotFoundException e1) {
 				e1.printStackTrace();
 			}
-			String uname = (String) personCurSess.getAttribute("uname");
+			String uname = ((Person)personCurSess.getAttribute("personLoggedIn")).getUsername();
 			boolean orderOk = verifyOrder(order, uname, personCurSess, personService);
 			if (orderOk) {
 				msg.setOrder(order);

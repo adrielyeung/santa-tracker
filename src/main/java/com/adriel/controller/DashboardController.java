@@ -1,13 +1,11 @@
 package com.adriel.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,36 +13,36 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.adriel.entity.Order;
 import com.adriel.entity.Person;
 import com.adriel.utils.Redirections;
+import com.adriel.utils.Utils;
 import com.adriel.utils.ConstStrings;
 
 @Controller
 public class DashboardController {
 	
-	@GetMapping(value="/app/dashboard")
+	@GetMapping(value=ConstStrings.DASHBOARD)
 	public String goToDashboardAfterLogin(HttpServletRequest req, HttpServletResponse resp) {
-		HttpSession custCurSess = req.getSession();
-		
-		Person personLoggedIn = (Person) custCurSess.getAttribute("personLoggedIn");
-		if (personLoggedIn == null) {
-			Redirections.redirect(req, resp, ConstStrings.INDEX, ConstStrings.SESSION_EXPIRED);
+		if (Utils.isLoggedOut(req)) {
+			Redirections.redirect(req, resp, ConstStrings.INDEX, ConstStrings.INDEX_ERR, ConstStrings.SESSION_EXPIRED);
 			return null;
 		}
-		List<Order> custOrd = personLoggedIn.getPersonOrders();
-		if (custOrd == null) {
-			Redirections.redirect(req, resp, ConstStrings.INDEX, ConstStrings.SESSION_EXPIRED);
+		Person personLoggedIn = (Person) req.getSession().getAttribute("personLoggedIn");
+		List<Order> personOrd = personLoggedIn.getPersonOrders();
+		if (personOrd == null) {
+			Redirections.redirect(req, resp, ConstStrings.INDEX, ConstStrings.INDEX_ERR, ConstStrings.SESSION_EXPIRED);
 			return null;
 		}
-		Collections.sort(custOrd);
-		List<Order> custOrdLatest = new ArrayList<>();
-		if (custOrd.size() < 5) {
-			custOrdLatest = custOrd;
+		Collections.sort(personOrd);
+		List<Order> personOrdLatest = new ArrayList<>();
+		if (personOrd.size() < 5) {
+			personOrdLatest = personOrd;
 		} else {
 			for (int i = 0; i < 5; i++) {
-				custOrdLatest.add(custOrd.get(i));
+				personOrdLatest.add(personOrd.get(i));
 			}
 		}
-		custCurSess.setAttribute("custOrdLatest", custOrdLatest);
+		req.getSession().setAttribute("personOrdLatest", personOrdLatest);
 		
 		return "App/dashboard";
 	}
+	
 }

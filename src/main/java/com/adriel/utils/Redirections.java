@@ -7,8 +7,11 @@ import javax.servlet.http.HttpServletResponse;
 
 public class Redirections {
 	
-	public static void redirect(HttpServletRequest req, HttpServletResponse resp, String url, String errMsg) {
-		req.getSession().setAttribute("errMsg", errMsg);
+	public static void redirect(HttpServletRequest req, HttpServletResponse resp, String url, String msgAttributeName, String errMsg) {
+		if (errMsg != null) {
+			req.getSession().setAttribute(msgAttributeName, errMsg);
+		}
+		
 		try {
 			resp.sendRedirect(url);
 		} catch (IOException e) {

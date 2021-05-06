@@ -23,7 +23,7 @@ public class OrderService {
 	@Autowired
 	private OrderRepository orderRepository;
 	@Autowired
-	private PersonRepository customerRepository;
+	private PersonRepository personRepository;
 	
 	public List<Order> getAllOrders() {
 		return orderRepository.findAll();
@@ -35,11 +35,11 @@ public class OrderService {
 	}
 	
 	public Order createOrder(@Valid @RequestBody Order order) throws ResourceNotFoundException {
-		// Add this order to the customer before saving
-		Person customer = customerRepository.findById(order.getPersonID())
+		// Add this order to the person before saving
+		Person person = personRepository.findById(order.getPersonID())
 				.orElseThrow(() -> new ResourceNotFoundException("Customer not found for this id."));
-		customer.addOrder(order);
-		customerRepository.save(customer);
+		person.addOrder(order);
+		personRepository.save(person);
 		return orderRepository.save(order);
 	}
 	

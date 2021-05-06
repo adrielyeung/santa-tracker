@@ -99,6 +99,15 @@ public class PersonService {
 		return personList;
 	}
 	
+	public List<Person> getAllCustomers() 
+			throws ResourceNotFoundException {
+		List<Person> personList = personRepository.findByAdmin(0);
+		if (personList == null || personList.size() == 0) {
+			throw new ResourceNotFoundException("No customer found.");
+		}
+		return personList;
+	}
+	
 	public Person generateResetPasswordToken(Person person) {
 		person.setResetPasswordToken(Utils.generateRandomAlphanumericString(TOKEN_LENGTH));
 		return personRepository.save(person);

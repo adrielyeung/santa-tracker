@@ -34,7 +34,7 @@ public class Order extends SantaTrackerEntity implements Comparable<Order> {
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "personID", referencedColumnName = "personID")
-	private Person customer;
+	private Person person;
 
 	@OneToMany(mappedBy = "order")
 	private List<Message> orderMsgs = new ArrayList<>();
@@ -46,10 +46,10 @@ public class Order extends SantaTrackerEntity implements Comparable<Order> {
 		
 	}
 
-	public Order(Person customer, LocalDateTime orderTime, LocalDateTime plannedTime, LocalDateTime estimatedTime,
+	public Order(Person person, LocalDateTime orderTime, LocalDateTime plannedTime, LocalDateTime estimatedTime,
 			int status, String location) {
 		super();
-		this.customer = customer;
+		this.person = person;
 		this.orderTime = orderTime;
 		this.plannedTime = plannedTime;
 		this.estimatedTime = estimatedTime;
@@ -58,7 +58,7 @@ public class Order extends SantaTrackerEntity implements Comparable<Order> {
 	}
 
 	public int getPersonID() {
-		return this.customer.getPersonID();
+		return this.person.getPersonID();
 	}
 
 	public void setOrderID(int orderID) {
@@ -109,12 +109,12 @@ public class Order extends SantaTrackerEntity implements Comparable<Order> {
 		return orderID;
 	}
 	
-	public Person getCustomer() {
-		return customer;
+	public Person getPerson() {
+		return person;
 	}
 
-	public void setCustomer(Person Customer) {
-		this.customer = Customer;
+	public void setPerson(Person person) {
+		this.person = person;
 	}
 	
 	public List<Message> getOrderMsgs() {

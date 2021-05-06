@@ -18,11 +18,11 @@ public class MessageController {
 	
 	@RequestMapping(value="/app/message", method=RequestMethod.GET)
 	public String goToMessagePage(HttpServletRequest req, HttpServletResponse resp) {
-		HttpSession custCurSess = req.getSession();
+		HttpSession personCurSess = req.getSession();
 		
-		List<Message> custMsg = (List<Message>) custCurSess.getAttribute("custMsg");
+		List<Message> personMsg = (List<Message>) personCurSess.getAttribute("personMsg");
 		
-		if (custMsg != null) {
+		if (personMsg != null) {
 			return "App/msg";
 		} else {
 			req.getSession().setAttribute("errMsg", "Session has expired. Please login again.");

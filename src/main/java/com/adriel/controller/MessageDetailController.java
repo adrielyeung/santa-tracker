@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.adriel.entity.Message;
 import com.adriel.exception.ResourceNotFoundException;
 import com.adriel.service.MessageService;
+import com.adriel.utils.ConstStrings;
 
 @Controller
 public class MessageDetailController {
@@ -22,20 +23,20 @@ public class MessageDetailController {
 	@Autowired
 	MessageService messageService;
 	
-	@RequestMapping(value="/app/msgdet/{msgid}", method=RequestMethod.GET)
+	@RequestMapping(value=ConstStrings.MESSAGE_DETAIL, method=RequestMethod.GET)
 	public String goToMsgDetail(HttpServletRequest req, HttpServletResponse resp, @PathVariable String msgid) {
 		
-		HttpSession custCurSess = req.getSession();
+		HttpSession personCurSess = req.getSession();
 		
-		if (custCurSess.getAttribute("uname") != null && custCurSess.getAttribute("psw") != null) {
+		if (personCurSess.getAttribute("personLoggedIn") != null) {
 			int msgID = Integer.parseInt(msgid);
 			
 			Message m = null;
 			try {
 				m = messageService.getMessageById(msgID);
 			} catch (ResourceNotFoundException e1) {
-				custCurSess.setAttribute("ordIderrMsg", "");
-				custCurSess.setAttribute("msgIderrMsg", "Cannot access message #" + msgID + ".");
+				personCurSess.setAttribute("ordIdErrMsg", "");
+				personCurSess.setAttribute("msgIderrMsg", "Cannot access message #" + msgID + ".");
 				try {
 					resp.sendRedirect("/app/dashboard");
 				} catch (IOException e) {
@@ -52,8 +53,8 @@ public class MessageDetailController {
 				req.setAttribute("sentTime", m.getSentTime());
 				return "App/msgdet";
 			} else {
-				custCurSess.setAttribute("ordIderrMsg", "");
-				custCurSess.setAttribute("msgIderrMsg", "Cannot access message #" + msgID + ".");
+				personCurSess.setAttribute("ordIdErrMsg", "");
+				personCurSess.setAttribute("msgIderrMsg", "Cannot access message #" + msgID + ".");
 				try {
 					resp.sendRedirect("/app/dashboard");
 				} catch (IOException e) {
@@ -62,7 +63,7 @@ public class MessageDetailController {
 				return null;
 			}
 		} else {
-			custCurSess.setAttribute("errMsg", "Session has expired. Please login again.");
+			personCurSess.setAttribute("errMsg", "Session has expired. Please login again.");
 			try {
 				resp.sendRedirect("/index");
 			} catch (IOException e) {

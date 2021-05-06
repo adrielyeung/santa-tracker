@@ -9,11 +9,13 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class NoCacheFilterTest {	
 	@Test
 	public void whenDoFilterCalled_thenClearCacheAndDoNextFilter() {
@@ -22,18 +24,13 @@ public class NoCacheFilterTest {
 		HttpServletResponse mockHResp = mock(HttpServletResponse.class);
 		FilterChain mockFC = mock(FilterChain.class);
 		RequestDispatcher mockRD = mock(RequestDispatcher.class);
-		HttpSession mockSession = mock(HttpSession.class);
 		NoCacheFilter ncf = new NoCacheFilter();
 		
-		when(mockHReq.getRequestDispatcher("/WEB-INF/Views/index.jsp")).thenReturn(mockRD);
-		when(mockHReq.getSession(false)).thenReturn(mockSession);
 		
 		// Act
 		try {
 			ncf.doFilter(mockHReq, mockHResp, mockFC);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ServletException e) {
+		} catch (IOException | ServletException e) {
 			e.printStackTrace();
 		}
 		
