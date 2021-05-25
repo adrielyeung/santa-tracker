@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.adriel.utils.ConstStrings;
+import com.adriel.utils.Constants;
 
 import static org.mockito.Mockito.*;
 
@@ -46,9 +46,9 @@ public class LogoutControllerTest {
 		inOrder.verify(mockReq).getSession(false);
 		inOrder.verify(mockSession).invalidate();
 		inOrder.verify(mockReq).getSession();
-		inOrder.verify(mockNewSession).setAttribute(ConstStrings.INDEX_ERR, ConstStrings.LOGGED_OUT);
+		inOrder.verify(mockNewSession).setAttribute(Constants.INDEX_ERR, Constants.LOGGED_OUT);
 		try {
-			inOrder.verify(mockResp).sendRedirect(ConstStrings.INDEX);
+			inOrder.verify(mockResp).sendRedirect(Constants.INDEX);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -69,9 +69,9 @@ public class LogoutControllerTest {
 		InOrder inOrder = inOrder(mockReq, mockNewSession, mockResp);
 		inOrder.verify(mockReq).getSession(false);
 		inOrder.verify(mockReq).getSession();
-		inOrder.verify(mockNewSession).setAttribute(ConstStrings.INDEX_ERR, ConstStrings.LOGGED_OUT);
+		inOrder.verify(mockNewSession).setAttribute(Constants.INDEX_ERR, Constants.LOGGED_OUT);
 		try {
-			inOrder.verify(mockResp).sendRedirect(ConstStrings.INDEX);
+			inOrder.verify(mockResp).sendRedirect(Constants.INDEX);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

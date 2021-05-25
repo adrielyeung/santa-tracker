@@ -16,7 +16,7 @@ import org.springframework.ui.Model;
 import com.adriel.entity.Person;
 import com.adriel.exception.ResourceNotFoundException;
 import com.adriel.service.PersonService;
-import com.adriel.utils.ConstStrings;
+import com.adriel.utils.Constants;
 import com.adriel.utils.EmailSender;
 
 import static org.junit.Assert.assertEquals;
@@ -96,7 +96,7 @@ public class ResetControllerTest {
 		InOrder inOrder = inOrder(mockReq, mockResp, mockModel);
 		inOrder.verify(mockReq).getSession();
 		try {
-			inOrder.verify(mockResp).sendRedirect(ConstStrings.RESET);
+			inOrder.verify(mockResp).sendRedirect(Constants.RESET);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

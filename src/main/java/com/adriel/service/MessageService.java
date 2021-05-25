@@ -37,6 +37,10 @@ public class MessageService {
 		return messageRepository.findByOrder(order);
 	}
 	
+	public List<Message> getMessagesByPersonId(Integer personID) {
+		return messageRepository.findAllMessagesByPersonId(personID);
+	}
+	
 	public Message createMessage(Message message) {
 		return messageRepository.save(message);
 	}

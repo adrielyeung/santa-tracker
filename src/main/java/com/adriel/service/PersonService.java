@@ -1,5 +1,6 @@
 package com.adriel.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,7 +106,14 @@ public class PersonService {
 		if (personList == null || personList.size() == 0) {
 			throw new ResourceNotFoundException("No customer found.");
 		}
-		return personList;
+		
+		List<Person> customerList = new ArrayList<>();
+		for (Person person : personList) {
+			if (person.getAdminToken() == null || "".equals(person.getAdminToken())) {
+				customerList.add(person);
+			}
+		}
+		return customerList;
 	}
 	
 	public Person generateResetPasswordToken(Person person) {
