@@ -28,7 +28,7 @@ import org.springframework.ui.Model;
 import com.adriel.entity.Person;
 import com.adriel.exception.ResourceNotFoundException;
 import com.adriel.service.PersonService;
-import com.adriel.utils.ConstStrings;
+import com.adriel.utils.Constants;
 import com.adriel.utils.EmailSender;
 
 import static org.junit.Assert.*;
@@ -130,9 +130,9 @@ public class RegisterControllerTest {
 			}
 			inOrder.verify(mockReq).getParameter("repsw");
 			inOrder.verify(mockPersonService).createPerson(mockPerson);
-			inOrder.verify(mockSess).setAttribute(ConstStrings.INDEX_ERR, ConstStrings.SUCCESS_REGISTER);
+			inOrder.verify(mockSess).setAttribute(Constants.INDEX_ERR, Constants.SUCCESS_REGISTER);
 			try {
-				inOrder.verify(mockResp).sendRedirect(ConstStrings.INDEX);
+				inOrder.verify(mockResp).sendRedirect(Constants.INDEX);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -196,9 +196,9 @@ public class RegisterControllerTest {
 			} catch (MessagingException e1) {
 				e1.printStackTrace();
 			}
-			inOrder.verify(mockSess).setAttribute(ConstStrings.INDEX_ERR, ConstStrings.PENDING_ADMIN_APPROVAL);
+			inOrder.verify(mockSess).setAttribute(Constants.INDEX_ERR, Constants.PENDING_ADMIN_APPROVAL);
 			try {
-				inOrder.verify(mockResp).sendRedirect(ConstStrings.INDEX);
+				inOrder.verify(mockResp).sendRedirect(Constants.INDEX);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -233,9 +233,9 @@ public class RegisterControllerTest {
 			}
 			inOrder.verify(mockSess).setAttribute("email_reg", email);
 			inOrder.verify(mockSess).setAttribute("addr_reg", addr);
-			inOrder.verify(mockSess).setAttribute(ConstStrings.REGISTER_ERR, ConstStrings.USERNAME_TAKEN);
+			inOrder.verify(mockSess).setAttribute(Constants.REGISTER_ERR, Constants.USERNAME_TAKEN);
 			try {
-				inOrder.verify(mockResp).sendRedirect(ConstStrings.REGISTER);
+				inOrder.verify(mockResp).sendRedirect(Constants.REGISTER);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -276,9 +276,9 @@ public class RegisterControllerTest {
 			inOrder.verify(mockSess).setAttribute("uname_reg", uname);
 			inOrder.verify(mockSess).setAttribute("addr_reg", addr);
 			inOrder.verify(mockSess).setAttribute("email_reg", "");
-			inOrder.verify(mockSess).setAttribute(ConstStrings.REGISTER_ERR, ConstStrings.EMAIL_TAKEN);
+			inOrder.verify(mockSess).setAttribute(Constants.REGISTER_ERR, Constants.EMAIL_TAKEN);
 			try {
-				inOrder.verify(mockResp).sendRedirect(ConstStrings.REGISTER);
+				inOrder.verify(mockResp).sendRedirect(Constants.REGISTER);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -323,9 +323,9 @@ public class RegisterControllerTest {
 			inOrder.verify(mockSess).setAttribute("uname_reg", uname);
 			inOrder.verify(mockSess).setAttribute("email_reg", email);
 			inOrder.verify(mockSess).setAttribute("addr_reg", addr);
-			inOrder.verify(mockSess).setAttribute(ConstStrings.REGISTER_ERR, ConstStrings.PWD_NOT_MATCH);
+			inOrder.verify(mockSess).setAttribute(Constants.REGISTER_ERR, Constants.PWD_NOT_MATCH);
 			try {
-				inOrder.verify(mockResp).sendRedirect(ConstStrings.REGISTER);
+				inOrder.verify(mockResp).sendRedirect(Constants.REGISTER);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -370,9 +370,9 @@ public class RegisterControllerTest {
 			inOrder.verify(mockSess).setAttribute("uname_reg", uname);
 			inOrder.verify(mockSess).setAttribute("email_reg", email);
 			inOrder.verify(mockSess).setAttribute("addr_reg", addr);
-			inOrder.verify(mockSess).setAttribute(ConstStrings.REGISTER_ERR, ConstStrings.PWD_LENGTH);
+			inOrder.verify(mockSess).setAttribute(Constants.REGISTER_ERR, Constants.PWD_LENGTH);
 			try {
-				inOrder.verify(mockResp).sendRedirect(ConstStrings.REGISTER);
+				inOrder.verify(mockResp).sendRedirect(Constants.REGISTER);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -412,9 +412,9 @@ public class RegisterControllerTest {
 			} catch (MessagingException e1) {
 				e1.printStackTrace();
 			}
-			inOrder.verify(mockSess).setAttribute(ConstStrings.INDEX_ERR, String.format(ConstStrings.SUCCESS_ADMIN, "Admin"));
+			inOrder.verify(mockSess).setAttribute(Constants.INDEX_ERR, String.format(Constants.SUCCESS_ADMIN, "Admin"));
 			try {
-				inOrder.verify(mockResp).sendRedirect(ConstStrings.INDEX);
+				inOrder.verify(mockResp).sendRedirect(Constants.INDEX);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

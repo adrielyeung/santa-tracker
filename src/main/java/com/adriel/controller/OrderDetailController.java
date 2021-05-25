@@ -1,13 +1,9 @@
 package com.adriel.controller;
 
-import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.Collections;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,11 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.adriel.entity.Order;
-import com.adriel.entity.OrderDetail;
 import com.adriel.entity.Person;
 import com.adriel.exception.ResourceNotFoundException;
 import com.adriel.service.OrderService;
-import com.adriel.utils.ConstStrings;
+import com.adriel.utils.Constants;
+import com.adriel.utils.Redirections;
+import com.adriel.utils.Utils;
 
 @Controller
 public class OrderDetailController {
@@ -28,63 +25,46 @@ public class OrderDetailController {
 	@Autowired
 	OrderService orderService;
 	
-	private static DecimalFormat df = new DecimalFormat("0.00");
-	
-	@RequestMapping(value=ConstStrings.ORDER_DETAIL, method=RequestMethod.GET)
+	@RequestMapping(value=Constants.ORDER_DETAIL, method=RequestMethod.GET)
 	public String goToOrderDetail(HttpServletRequest req, HttpServletResponse resp, @PathVariable String orderid) {
 		
-		HttpSession personCurSess = req.getSession();
-		
-		if (personCurSess.getAttribute("personLoggedIn") != null) {
-			int orderID = Integer.parseInt(orderid);
-			
-			Order o = null;
-			try {
-				o = orderService.getOrderById(orderID);
-			} catch (ResourceNotFoundException e1) {
-				personCurSess.setAttribute("ordIdErrMsg", "Cannot access order #" + orderID + ".");
-				personCurSess.setAttribute("msgIderrMsg", "");
-				try {
-					resp.sendRedirect("/app/dashboard");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				return null;
-			}
-			req.setAttribute("curOrderID", orderID);
-			
-			if (o != null && o.getPerson().getUsername().equals(((Person)personCurSess.getAttribute("personLoggedIn")).getUsername())) {
-				List<OrderDetail> ordDet = o.getOrderDets();
-				
-				Collections.sort(ordDet);
-				
-				double totalCost = 0.0;
-				for(OrderDetail orddet : ordDet) {
-					totalCost += orddet.getProduct().getUnitPrice() * orddet.getQuantity();
-				}
-				String roundedCost = df.format(totalCost);
-				
-				req.setAttribute("ordDet", ordDet);
-				req.setAttribute("totalCost", roundedCost);
-				return "App/orderdet";
-			} else {
-				personCurSess.setAttribute("ordIdErrMsg", "Cannot access order #" + orderID + ".");
-				personCurSess.setAttribute("msgIderrMsg", "");
-				try {
-					resp.sendRedirect("/app/dashboard");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				return null;
-			}
-		} else {
-			personCurSess.setAttribute("errMsg", "Session has expired. Please login again.");
-			try {
-				resp.sendRedirect("/index");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		if (Utils.isLoggedOut(req)) {
+			Redirections.redirect(req, resp, Constants.INDEX, Constants.INDEX_ERR, Constants.SESSION_EXPIRED);
 			return null;
 		}
+		
+		Order order = null;
+		try {
+			order = orderService.getOrderById(Integer.parseInt(orderid));
+		} catch (ResourceNotFoundException e1) {
+			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, String.format(Constants.ORDER_NOT_FOUND, orderid));
+			return null;
+		}
+		req.setAttribute("order", order);
+		
+		if (!checkAccess(order, ((Person)req.getSession().getAttribute("personLoggedIn")), req)) {
+			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, String.format(Constants.ORDER_NOT_FOUND, orderid));
+			return null;
+		}
+		
+		Collections.sort(order.getOrderDets());
+		
+		req.setAttribute("totalCost", Constants.TWO_DECIMAL_DIGITS_FORMATTER.format(Utils.findTotalCost(order.getOrderDets())));
+		return "App/orderdet";
+	}
+	
+	private boolean checkAccess(Order order, Person person, HttpServletRequest req) {
+		
+		// Order is requested by the same user
+		if (order.getPerson().getUsername().equals(person.getUsername())) {
+			return true;
+		}
+		
+		// Admin allowed to view all orders
+		if (person.getAdmin() == 1) {
+			return true;
+		}
+		
+		return false;
 	}
 }

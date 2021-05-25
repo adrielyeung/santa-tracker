@@ -23,7 +23,7 @@ import com.adriel.entity.SantaTrackerEntityType;
 import com.adriel.exception.ResourceNotFoundException;
 import com.adriel.factory.EntityFactory;
 import com.adriel.service.PersonService;
-import com.adriel.utils.ConstStrings;
+import com.adriel.utils.Constants;
 import com.adriel.utils.EmailSender;
 import com.adriel.utils.Redirections;
 import com.adriel.utils.Utils;
@@ -36,7 +36,7 @@ public class RegisterController {
 	@Autowired
 	EmailSender emailSender;
 	
-	@RequestMapping(value=ConstStrings.REGISTER, method=RequestMethod.GET)
+	@RequestMapping(value=Constants.REGISTER, method=RequestMethod.GET)
 	public String goToRegisterPage(Model model, @Param(value = "admin") String admin, HttpServletRequest req, HttpServletResponse resp) {
 		int adminInt = 0;
 		// Admin > 0 for admin role, any other string for person role
@@ -53,7 +53,7 @@ public class RegisterController {
 		return "register";
 	}
 	
-	@RequestMapping(value=ConstStrings.VERIFY_REGISTER, method=RequestMethod.POST)
+	@RequestMapping(value=Constants.VERIFY_REGISTER, method=RequestMethod.POST)
 	public void verifyRegister(@ModelAttribute("person") Person person, HttpServletRequest req, HttpServletResponse resp) {
 		
 		String usernameErrMsg = verifyUsername(person, req);
@@ -71,32 +71,32 @@ public class RegisterController {
 							List<Person> adminList = personService.getAllAdminPersons();
 							List<String> adminEmailList = adminList.stream().map(Person::getEmail).collect(Collectors.toCollection(ArrayList::new));
 							Person personWithToken = personService.generateAdminApproveToken(person);
-							String tokenUrl = Utils.getSiteURL(req) + ConstStrings.ADMIN_TOKEN + personWithToken.getAdminToken();
+							String tokenUrl = Utils.getSiteURL(req) + Constants.ADMIN_TOKEN + personWithToken.getAdminToken();
 							
 							emailSender.sendEmail(new ArrayList<String>(), new ArrayList<String>(), adminEmailList, 
-									ConstStrings.EMAIL_ADMIN_TITLE, String.format(ConstStrings.EMAIL_ADMIN_BODY, personWithToken.getUsername(), personWithToken.getEmail(), tokenUrl));
+									Constants.EMAIL_ADMIN_TITLE, String.format(Constants.EMAIL_ADMIN_BODY, personWithToken.getUsername(), personWithToken.getEmail(), tokenUrl));
 						} catch (ResourceNotFoundException e) {
-							Redirections.redirect(req, resp, ConstStrings.REGISTER, ConstStrings.REGISTER_ERR, String.format(ConstStrings.PERSON_NOT_FOUND_EMAIL, person.getEmail()));
+							Redirections.redirect(req, resp, Constants.REGISTER, Constants.REGISTER_ERR, String.format(Constants.PERSON_NOT_FOUND_EMAIL, person.getEmail()));
 						} catch (MessagingException | UnsupportedEncodingException e) {
-							Redirections.redirect(req, resp, ConstStrings.REGISTER, ConstStrings.REGISTER_ERR, ConstStrings.EMAIL_SEND_ERROR);
+							Redirections.redirect(req, resp, Constants.REGISTER, Constants.REGISTER_ERR, Constants.EMAIL_SEND_ERROR);
 						}
-						Redirections.redirect(req, resp, ConstStrings.INDEX, ConstStrings.INDEX_ERR, ConstStrings.PENDING_ADMIN_APPROVAL);
+						Redirections.redirect(req, resp, Constants.INDEX, Constants.INDEX_ERR, Constants.PENDING_ADMIN_APPROVAL);
 					} else {
 						personService.createPerson(person);
-						Redirections.redirect(req, resp, ConstStrings.INDEX, ConstStrings.INDEX_ERR, ConstStrings.SUCCESS_REGISTER);
+						Redirections.redirect(req, resp, Constants.INDEX, Constants.INDEX_ERR, Constants.SUCCESS_REGISTER);
 					}
 				} else {
-					Redirections.redirect(req, resp, ConstStrings.REGISTER, ConstStrings.REGISTER_ERR, passwordErrMsg);
+					Redirections.redirect(req, resp, Constants.REGISTER, Constants.REGISTER_ERR, passwordErrMsg);
 				}
 			} else {
-				Redirections.redirect(req, resp, ConstStrings.REGISTER, ConstStrings.REGISTER_ERR, emailErrMsg);
+				Redirections.redirect(req, resp, Constants.REGISTER, Constants.REGISTER_ERR, emailErrMsg);
 			}
 		} else {
-			Redirections.redirect(req, resp, ConstStrings.REGISTER, ConstStrings.REGISTER_ERR, usernameErrMsg);
+			Redirections.redirect(req, resp, Constants.REGISTER, Constants.REGISTER_ERR, usernameErrMsg);
 		}
 	}
 	
-	@RequestMapping(value=ConstStrings.VERIFY_ADMIN, method=RequestMethod.GET)
+	@RequestMapping(value=Constants.VERIFY_ADMIN, method=RequestMethod.GET)
 	public void verifyAdmin(@Param(value = "token") String token, HttpServletRequest req, HttpServletResponse resp) {
 		try {
 			Person person = personService.getPersonByAdminToken(token);
@@ -105,17 +105,17 @@ public class RegisterController {
 			personService.updatePerson(person.getPersonID(), person);
 			// Notify admin requester
 			emailSender.sendEmail(new ArrayList<>(Arrays.asList(person.getEmail())), new ArrayList<>(), new ArrayList<>(), 
-					ConstStrings.EMAIL_ADMIN_SUCCESS_REQUESTER_TITLE, String.format(ConstStrings.EMAIL_ADMIN_SUCCESS_REQUESTER_BODY, person.getUsername(), Utils.getSiteURL(req) + ConstStrings.INDEX));
+					Constants.EMAIL_ADMIN_SUCCESS_REQUESTER_TITLE, String.format(Constants.EMAIL_ADMIN_SUCCESS_REQUESTER_BODY, person.getUsername(), Utils.getSiteURL(req) + Constants.INDEX));
 			// Notify all other admins of new admin
 			List<Person> adminList = personService.getAllAdminPersons();
 			List<String> adminEmailList = adminList.stream().map(Person::getEmail).collect(Collectors.toCollection(ArrayList::new));
 			emailSender.sendEmail(new ArrayList<String>(), new ArrayList<String>(), adminEmailList, 
-					ConstStrings.EMAIL_ADMIN_SUCCESS_ALERT_ALL_TITLE, String.format(ConstStrings.EMAIL_ADMIN_SUCCESS_ALERT_ALL_BODY, person.getUsername(), person.getEmail()));
-			Redirections.redirect(req, resp, ConstStrings.INDEX, ConstStrings.INDEX_ERR, String.format(ConstStrings.SUCCESS_ADMIN, person.getUsername()));
+					Constants.EMAIL_ADMIN_SUCCESS_ALERT_ALL_TITLE, String.format(Constants.EMAIL_ADMIN_SUCCESS_ALERT_ALL_BODY, person.getUsername(), person.getEmail()));
+			Redirections.redirect(req, resp, Constants.INDEX, Constants.INDEX_ERR, String.format(Constants.SUCCESS_ADMIN, person.getUsername()));
 		} catch (ResourceNotFoundException e) {
-			Redirections.redirect(req, resp, ConstStrings.INDEX, ConstStrings.INDEX_ERR, ConstStrings.PERSON_NOT_FOUND_TOKEN_ADMIN);
+			Redirections.redirect(req, resp, Constants.INDEX, Constants.INDEX_ERR, Constants.PERSON_NOT_FOUND_TOKEN_ADMIN);
 		} catch (UnsupportedEncodingException | MessagingException e) {
-			Redirections.redirect(req, resp, ConstStrings.INDEX, ConstStrings.INDEX_ERR, ConstStrings.EMAIL_SEND_ERROR);
+			Redirections.redirect(req, resp, Constants.INDEX, Constants.INDEX_ERR, Constants.EMAIL_SEND_ERROR);
 		}
 	}
 	
@@ -124,7 +124,7 @@ public class RegisterController {
 		String errMsg = "";
 		try {
 			personService.getPersonByUsername(person.getUsername());
-			errMsg = ConstStrings.USERNAME_TAKEN;
+			errMsg = Constants.USERNAME_TAKEN;
 			req.getSession().setAttribute("uname_reg", "");
 			req.getSession().setAttribute("email_reg", person.getEmail());
 			req.getSession().setAttribute("addr_reg", person.getAddress());
@@ -137,7 +137,7 @@ public class RegisterController {
 		String errMsg = "";
 		try {
 			personService.getPersonByEmail(person.getEmail());
-			errMsg = ConstStrings.EMAIL_TAKEN;
+			errMsg = Constants.EMAIL_TAKEN;
 			req.getSession().setAttribute("uname_reg", person.getUsername());
 			req.getSession().setAttribute("addr_reg", person.getAddress());
 			req.getSession().setAttribute("email_reg", "");

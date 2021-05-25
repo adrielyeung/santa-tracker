@@ -40,7 +40,7 @@
 
   <div class="container" style="background-color:#f1f1f1">
     <span class="psw"><a href="/app/product">Back</a></span><br>
-    <c:if test="${type == 'Edit'}"><span class="psw"><a href="/app/delete-product/${product.productID}" onclick="return confirm('Are you sure you want to delete this product?');">Delete this product</a></span></c:if>
+    <!-- <c:if test="${type == 'Edit'}"><span class="psw"><a href="/app/delete-product/${product.productID}" onclick="return confirm('Are you sure you want to delete this product?');">Delete this product</a></span></c:if> -->
   </div>
 </sf:form>
 </body>

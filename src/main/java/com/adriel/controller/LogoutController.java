@@ -8,13 +8,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.adriel.utils.ConstStrings;
+import com.adriel.utils.Constants;
 import com.adriel.utils.Redirections;
 
 @Controller
 public class LogoutController {
 	
-	@RequestMapping(value=ConstStrings.LOGOUT, method=RequestMethod.GET)
+	@RequestMapping(value=Constants.LOGOUT, method=RequestMethod.GET)
 	public void logOut(HttpServletRequest req, HttpServletResponse resp) {
 		HttpSession personCurSess = req.getSession(false);
 		
@@ -22,6 +22,6 @@ public class LogoutController {
 			personCurSess.invalidate();
 		}
 		
-		Redirections.redirect(req, resp, ConstStrings.INDEX, ConstStrings.INDEX_ERR, ConstStrings.LOGGED_OUT);
+		Redirections.redirect(req, resp, Constants.INDEX, Constants.INDEX_ERR, Constants.LOGGED_OUT);
 	}
 }

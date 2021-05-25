@@ -43,7 +43,7 @@ public class EmailSender {
             MimeMessage message = new MimeMessage(session);
 
             // Set From: header field of the header.
-            message.setFrom(new InternetAddress(from, ConstStrings.APP_NAME));
+            message.setFrom(new InternetAddress(from, Constants.APP_NAME));
 
             // Set To, Cc, Bcc: header field of the header.
             for (String to : tos) {

@@ -23,7 +23,7 @@ import com.adriel.entity.Order;
 import com.adriel.entity.Person;
 import com.adriel.exception.ResourceNotFoundException;
 import com.adriel.service.PersonService;
-import com.adriel.utils.ConstStrings;
+import com.adriel.utils.Constants;
 
 import static org.junit.Assert.*;
 
@@ -83,7 +83,6 @@ public class LoginControllerTest {
 			}
 			
 			when(mockPersonCheck.getPword()).thenReturn(pword);
-			when(mockPersonCheck.getPersonOrders()).thenReturn(mockPersonOrders);
 			when(mockPersonCheck.getAdmin()).thenReturn(0);
 			when(mockPersonCheck.getAdminToken()).thenReturn("");
 			
@@ -98,10 +97,9 @@ public class LoginControllerTest {
 			} catch (ResourceNotFoundException e1) {
 				e1.printStackTrace();
 			}
-			inOrder.verify(mockSess).setAttribute("personOrd", mockPersonOrders);
 			inOrder.verify(mockSess).setAttribute("personLoggedIn", mockPersonCheck);
 			try {
-				inOrder.verify(mockResp).sendRedirect(ConstStrings.DASHBOARD);
+				inOrder.verify(mockResp).sendRedirect(Constants.DASHBOARD);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -136,9 +134,9 @@ public class LoginControllerTest {
 			} catch (ResourceNotFoundException e1) {
 				e1.printStackTrace();
 			}
-			inOrder.verify(mockSess).setAttribute(ConstStrings.INDEX_ERR, ConstStrings.PENDING_ADMIN_APPROVAL_ERR);
+			inOrder.verify(mockSess).setAttribute(Constants.INDEX_ERR, Constants.PENDING_ADMIN_APPROVAL_ERR);
 			try {
-				inOrder.verify(mockResp).sendRedirect(ConstStrings.INDEX);
+				inOrder.verify(mockResp).sendRedirect(Constants.INDEX);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -168,9 +166,9 @@ public class LoginControllerTest {
 			} catch (ResourceNotFoundException e1) {
 				e1.printStackTrace();
 			}
-			inOrder.verify(mockSess).setAttribute(ConstStrings.INDEX_ERR, ConstStrings.INVALID_USERNAME_PWORD);
+			inOrder.verify(mockSess).setAttribute(Constants.INDEX_ERR, Constants.INVALID_USERNAME_PWORD);
 			try {
-				inOrder.verify(mockResp).sendRedirect(ConstStrings.INDEX);
+				inOrder.verify(mockResp).sendRedirect(Constants.INDEX);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -201,9 +199,9 @@ public class LoginControllerTest {
 			} catch (ResourceNotFoundException e1) {
 				e1.printStackTrace();
 			}
-			inOrder.verify(mockSess).setAttribute(ConstStrings.INDEX_ERR, ConstStrings.INVALID_USERNAME_PWORD);
+			inOrder.verify(mockSess).setAttribute(Constants.INDEX_ERR, Constants.INVALID_USERNAME_PWORD);
 			try {
-				inOrder.verify(mockResp).sendRedirect(ConstStrings.INDEX);
+				inOrder.verify(mockResp).sendRedirect(Constants.INDEX);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -223,7 +221,7 @@ public class LoginControllerTest {
 			inOrder.verify(mockReq).getSession();
 			inOrder.verify(mockSess).getAttribute("personLoggedIn");
 			try {
-				inOrder.verify(mockResp).sendRedirect(ConstStrings.DASHBOARD);
+				inOrder.verify(mockResp).sendRedirect(Constants.DASHBOARD);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

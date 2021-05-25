@@ -4,47 +4,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import com.adriel.entity.Person;
 import com.adriel.entity.Order;
 import com.adriel.exception.ResourceNotFoundException;
-import com.adriel.repository.PersonRepository;
 import com.adriel.repository.OrderRepository;
 
 @Service
 public class OrderService {
 	@Autowired
 	private OrderRepository orderRepository;
-	@Autowired
-	private PersonRepository personRepository;
 	
 	public List<Order> getAllOrders() {
 		return orderRepository.findAll();
 	}
 	
-	public Order getOrderById(@PathVariable(value = "id") Integer orderID) throws ResourceNotFoundException {
+	public Order getOrderById(Integer orderID) throws ResourceNotFoundException {
 		return orderRepository.findById(orderID)
 				.orElseThrow(() -> new ResourceNotFoundException("Order not found for this id."));
 	}
 	
-	public Order createOrder(@Valid @RequestBody Order order) throws ResourceNotFoundException {
-		// Add this order to the person before saving
-		Person person = personRepository.findById(order.getPersonID())
-				.orElseThrow(() -> new ResourceNotFoundException("Customer not found for this id."));
-		person.addOrder(order);
-		personRepository.save(person);
+	public Order createOrder(Order order) {
 		return orderRepository.save(order);
 	}
 	
-	public ResponseEntity<Order> updateOrder(@PathVariable(value = "id") int orderID,
-			@Valid @RequestBody Order orderDetails) throws ResourceNotFoundException {
+	public ResponseEntity<Order> updateOrder(int orderID, Order orderDetails) throws ResourceNotFoundException {
 		Order order = orderRepository.findById(orderID)
 				.orElseThrow(() -> new ResourceNotFoundException("Order not found for this id."));
 		
@@ -57,8 +43,7 @@ public class OrderService {
 		return ResponseEntity.ok(updatedOrder);
 	}
 	
-	public Map<String, Boolean> deleteEmployee(@PathVariable(value = "id") Integer orderID)
-	throws ResourceNotFoundException {
+	public Map<String, Boolean> deleteOrder(Integer orderID) throws ResourceNotFoundException {
 		Order order = orderRepository.findById(orderID)
 				.orElseThrow(() -> new ResourceNotFoundException("Order not found for this id."));
 		

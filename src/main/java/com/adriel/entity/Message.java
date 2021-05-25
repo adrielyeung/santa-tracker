@@ -24,7 +24,7 @@ public class Message extends SantaTrackerEntity implements Comparable<Message> {
 	private int messageID;
 	
 	private String title;
-	private String message;
+	private String body;
 	private int fromCustomer;
 	private LocalDateTime sentTime;
 	
@@ -36,10 +36,10 @@ public class Message extends SantaTrackerEntity implements Comparable<Message> {
 		
 	}
 
-	public Message(String title, String message, int fromCustomer, LocalDateTime sentTime, Order order) {
+	public Message(String title, String body, int fromCustomer, LocalDateTime sentTime, Order order) {
 		super();
 		this.title = title;
-		this.message = message;
+		this.body = body;
 		this.fromCustomer = fromCustomer;
 		this.sentTime = sentTime;
 		this.order = order;
@@ -54,12 +54,12 @@ public class Message extends SantaTrackerEntity implements Comparable<Message> {
 		this.title = title;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getBody() {
+		return body;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void setBody(String body) {
+		this.body = body;
 	}
 
 	public int getFromCustomer() {
@@ -100,7 +100,7 @@ public class Message extends SantaTrackerEntity implements Comparable<Message> {
 
 	@Override
 	public String toString() {
-		return "Message [messageID=" + messageID + ", title=" + title + ", message=" + message + ", isfromCustomer="
+		return "Message [messageID=" + messageID + ", title=" + title + ", body=" + body + ", isfromCustomer="
 				+ fromCustomer + ", order=" + order + "]";
 	}
 	

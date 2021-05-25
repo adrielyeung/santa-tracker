@@ -66,6 +66,10 @@ public class Product extends SantaTrackerEntity {
 	public void setUnitPrice(double unitPrice) {
 		this.unitPrice = unitPrice;
 	}
+	
+	public String getNameAndUnitPrice() {
+		return name + " - $" + String.valueOf(unitPrice);
+	}
 
 	public int getProductID() {
 		return productID;
@@ -84,7 +88,7 @@ public class Product extends SantaTrackerEntity {
 	}
 	
 	public void addOrderDetail(OrderDetail ordd) {
-		if (! prodDets.contains(ordd) ) {
+		if (!prodDets.contains(ordd)) {
 			this.prodDets.add(ordd);
 			ordd.setProduct(this);
 		}
