@@ -30,7 +30,7 @@ import com.adriel.utils.Utils;
 public class ResetController {
 	
 	@Autowired
-	private PersonService personService;
+	PersonService personService;
 	@Autowired
 	EmailSender emailSender;
 	

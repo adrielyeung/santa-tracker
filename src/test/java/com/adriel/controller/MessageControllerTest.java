@@ -9,6 +9,7 @@ import org.mockito.Mock;
 
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import com.adriel.exception.ResourceNotFoundException;
 import com.adriel.service.MessageService;
 import com.adriel.service.OrderService;
 import com.adriel.service.PersonService;
+import com.adriel.utils.EmailSender;
 
 import static org.junit.Assert.*;
 
@@ -54,6 +56,8 @@ public class MessageControllerTest {
 	PersonService mockPersonService;
 	@Mock
 	MessageService mockMessageService;
+	@Mock
+	EmailSender mockEmailSender;
 	@Mock
 	List<Order> mockOrderList;
 	@Mock
@@ -168,6 +172,8 @@ public class MessageControllerTest {
 		when(mockOrder.getPerson()).thenReturn(mockPerson);
 		when(mockPerson.getUsername()).thenReturn(username);
 		when(mockReq.getParameter("orderID")).thenReturn(String.valueOf(orderid));
+		when(mockMessageService.createMessage(mockMessage)).thenReturn(mockMessage);
+		when(mockMessage.getSentTime()).thenReturn(LocalDateTime.now());
 		
 		testMessageController.verifyNewMessage(mockMessage, mockReq, mockResp);
 		
@@ -192,6 +198,13 @@ public class MessageControllerTest {
 		when(mockCustomer.getUsername()).thenReturn(customerUsername);
 		when(mockPerson.getAdmin()).thenReturn(1);
 		when(mockReq.getParameter("orderID")).thenReturn(String.valueOf(orderid));
+		when(mockMessageService.createMessage(mockMessage)).thenReturn(mockMessage);
+		when(mockMessage.getSentTime()).thenReturn(LocalDateTime.now());
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("localhost:8080/index");
+		when(mockReq.getRequestURL()).thenReturn(sb);
+		when(mockReq.getServletPath()).thenReturn("localhost:8080");
 		
 		testMessageController.verifyNewMessage(mockMessage, mockReq, mockResp);
 		

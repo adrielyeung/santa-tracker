@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.adriel.entity.Product;
@@ -30,15 +29,14 @@ public class ProductService {
 		return productRepository.save(product);
 	}
 	
-	public ResponseEntity<Product> updateProduct(int productID, Product productDetails) throws ResourceNotFoundException {
+	public Product updateProduct(int productID, Product productDetails) throws ResourceNotFoundException {
 		Product product = productRepository.findById(productID)
 				.orElseThrow(() -> new ResourceNotFoundException("Product not found for this id."));
 		
 		product.setName(productDetails.getName());
 		product.setSpec(productDetails.getSpec());
 		product.setUnitPrice(productDetails.getUnitPrice());
-		final Product updatedProduct = productRepository.save(product);
-		return ResponseEntity.ok(updatedProduct);
+		return productRepository.save(product);
 	}
 	
 	public Map<String, Boolean> deleteProduct(Integer productID) throws ResourceNotFoundException {

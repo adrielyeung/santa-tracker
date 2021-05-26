@@ -1,12 +1,15 @@
 package com.adriel.utils;
 
 import java.text.DecimalFormat;
+import java.time.format.DateTimeFormatter;
 
 public final class Constants {
 	
-	public static final String APP_NAME = "SantaTracker";
+	public static final String APP_NAME = "Santa Tracker";
 	
 	public static final DecimalFormat TWO_DECIMAL_DIGITS_FORMATTER = new DecimalFormat("0.00");
+	
+	public static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 	
 	// Paths
 	public static final String ROOT = "/";
@@ -101,45 +104,95 @@ public final class Constants {
 	public static final String SUCCESS_SEND_MESSAGE = "Your message is sent. Thank you for contacting us!";
 	
 	// Email
-	public static final String EMAIL_RESET_PWD_TITLE = "Reset password for SantaTracker";
-	public static final String EMAIL_RESET_PWD_BODY = "<h3>Dear %s,</h3><br>"
-			+ "<h3>Please click the below link to reset your password.</h3><br>"
-			+ "<a href=\"%s\">Change password</a><br>"
-			+ "<p>~SantaTracker</p>"
+	private static final String EMAIL_SALUTATION = "<h3>Dear %s,</h3><br>"; 
+	private static final String EMAIL_SIGNATURE = "<p>~" + APP_NAME + "</p>"
 			+ "---------------------------<br>"
 			+ "<i>This email is system-generated from an unmonitored address. Please do not reply to this email.</i><br>"
 			+ "<i>Please do not forward this email.</i><br>"
-			+ "<i>Please ignore this email if you have not requested to change your password.</i>";
-	public static final String EMAIL_ADMIN_TITLE = "New admin registration request for SantaTracker";
+			+ "<i>Please ignore this email if you are not an intended recipient.</i>";
+	
+	public static final String EMAIL_TABLE_ROW = "<tr><td>%s</td><td>%s</td></tr>";
+	
+	public static final String EMAIL_RESET_PWD_TITLE = "[" + APP_NAME + "] Reset password";
+	public static final String EMAIL_RESET_PWD_BODY = EMAIL_SALUTATION
+			+ "<h3>Please click the below link to reset your password.</h3><br>"
+			+ "<a href=\"%s\">Change password</a><br>"
+			+ EMAIL_SIGNATURE;
+	
+	public static final String EMAIL_ADMIN_TITLE = "[" + APP_NAME + "] New admin registration request for SantaTracker";
 	public static final String EMAIL_ADMIN_BODY = "<h3>We have received a new registration for admin role.</h3><br>"
 			+ "<h3>Please click the below link to approve this request from:</h3><br>"
 			+ "<p><b>Username: </b>%s</p>"
 			+ "<p><b>Email: </b>%s</p>"
 			+ "<a href=\"%s\">Approve this request</a><br>"
-			+ "<p>~SantaTracker</p>"
-			+ "---------------------------<br>"
-			+ "<i>This email is system-generated from an unmonitored address. Please do not reply to this email.</i><br>"
-			+ "<i>Please do not forward this email.</i><br>"
-			+ "<i>Please ignore this email if you are not an intended recipient.</i>";
+			+ EMAIL_SIGNATURE;
 	
-	public static final String EMAIL_ADMIN_SUCCESS_REQUESTER_TITLE = "Successful admin registration for SantaTracker";
-	public static final String EMAIL_ADMIN_SUCCESS_REQUESTER_BODY = "<h3>Dear %s,</h3><br>"
+	public static final String EMAIL_ADMIN_SUCCESS_REQUESTER_TITLE = "[" + APP_NAME + "] Successful admin registration";
+	public static final String EMAIL_ADMIN_SUCCESS_REQUESTER_BODY = EMAIL_SALUTATION
 			+ "<h3>Your admin request has been approved.</h3><br>"
 			+ "<h3>Please click the below link to sign in as admin:</h3><br>"
 			+ "<a href=\"%s\">Log in to SantaTracker</a><br>"
-			+ "<p>~SantaTracker</p>"
-			+ "---------------------------<br>"
-			+ "<i>This email is system-generated from an unmonitored address. Please do not reply to this email.</i><br>"
-			+ "<i>Please do not forward this email.</i><br>"
-			+ "<i>Please ignore this email if you are not an intended recipient.</i>";
+			+ EMAIL_SIGNATURE;
 	
-	public static final String EMAIL_ADMIN_SUCCESS_ALERT_ALL_TITLE = "New admin for SantaTracker approved";
+	public static final String EMAIL_ADMIN_SUCCESS_ALERT_ALL_TITLE = "[" + APP_NAME + "] New admin approved";
 	public static final String EMAIL_ADMIN_SUCCESS_ALERT_ALL_BODY = "<h3>We have set up a new admin:</h3><br>"
 			+ "<p><b>Username: </b>%s</p>"
 			+ "<p><b>Email: </b>%s</p>"
-			+ "<p>~SantaTracker</p>"
+			+ EMAIL_SIGNATURE;
+	
+	public static final String EMAIL_MESSAGE_SENT_TITLE = "[" + APP_NAME + "] Message has been sent";
+	public static final String EMAIL_MESSAGE_SENT_BODY = EMAIL_SALUTATION
+			+ "<p>Your message has been sent to our team with below details: </p>"
+			+ "<p><b>Message ID: </b>%s</p>"
+			+ "<p><b>Title: </b>%s</p>"
+			+ "<p><b>Body: </b><br>"
+			+ "%s</p>"
+			+ "<p><b>Sent time: </b>%s</p>"
+			+ "<p>Thank you for contacting us!</p>"
+			+ EMAIL_SIGNATURE;
+	
+	public static final String EMAIL_MESSAGE_RECEIVED_TITLE = "[" + APP_NAME + "] Message has been received";
+	public static final String EMAIL_MESSAGE_RECEIVED_BODY = EMAIL_SALUTATION
+			+ "<p>You have received a message from our team with below details: </p>"
+			+ "<p><b>Message ID: </b>%s</p>"
+			+ "<p><b>Title: </b>%s</p>"
+			+ "<p><b>Body: </b><br>"
+			+ "%s</p>"
+			+ "<p><b>Sent time: </b>%s</p>"
+			+ "<a href=\"%s\">Reply to the message</a><br>"
+			+ EMAIL_SIGNATURE;
+	
+	public static final String EMAIL_ORDER_SUCCESS_TITLE = "[" + APP_NAME + "] Order #%s has been placed";
+	public static final String EMAIL_ORDER_SUCCESS_BODY = EMAIL_SALUTATION
+			+ "<p>You have successfully placed an order with below details: </p>"
+			+ "<p><b>Order ID: </b>%s</p>"
+			+ "<p><b>Order details: </b></p>"
+			+ "<table>"
+			+ "<tr><th>Product</th><th>Quantity</th></tr>"
+			+ "%s</table>"
+			+ "<p><b>Total cost: </b>$%s</p>"
+			+ "<p><b>Order time: </b>%s</p>"
+			+ "<a href=\"%s\">Login to see updates to this order</a><br>"
+			+ EMAIL_SIGNATURE;
+	
+	public static final String EMAIL_ORDER_SCHEDULED_TITLE = "[" + APP_NAME + "] Order #%s schedule status: %s";
+	public static final String EMAIL_ORDER_SCHEDULED_BODY = EMAIL_SALUTATION
+			+ "<p>One of your orders' schedule has been updated with below details: </p>"
+			+ "<p><b>Order ID: </b>%s</p>"
+			+ "<p><b>Order details: </b></p>"
+			+ "<table>"
+			+ "<tr><th>Product</th><th>Quantity</th></tr>"
+			+ "%s</table>"
+			+ "<p><b>Total cost: </b>$%s</p>"
+			+ "<p><b>Order time: </b>%s</p>"
+			+ "<br>"
+			+ "<p><b>Schedule</b></p>"
 			+ "---------------------------<br>"
-			+ "<i>This email is system-generated from an unmonitored address. Please do not reply to this email.</i><br>"
-			+ "<i>Please do not forward this email.</i><br>"
-			+ "<i>Please ignore this email if you are not an intended recipient.</i>";
+			+ "<p><b>Planned time: </b>%s</p>"
+			+ "<p><b>Estimated time: </b>%s</p>"
+			+ "<p><b>Location: </b>%s</p>"
+			+ "<p><b>Status: </b>%s</p>"
+			+ "<a href=\"%s\">Login to see updates to this order</a><br>"
+			+ EMAIL_SIGNATURE;
+	
 }

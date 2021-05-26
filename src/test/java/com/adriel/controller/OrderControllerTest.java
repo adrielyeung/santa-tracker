@@ -29,6 +29,7 @@ import com.adriel.service.OrderDetailService;
 import com.adriel.service.OrderService;
 import com.adriel.service.PersonService;
 import com.adriel.service.ProductService;
+import com.adriel.utils.EmailSender;
 
 import static org.junit.Assert.*;
 
@@ -58,6 +59,8 @@ public class OrderControllerTest {
 	PersonService mockPersonService;
 	@Mock
 	OrderDetailService mockOrderDetailService;
+	@Mock
+	EmailSender mockEmailSender;
 	@Mock
 	List<Order> mockOrderList;
 	@Mock
@@ -254,9 +257,23 @@ public class OrderControllerTest {
 		} catch (ResourceNotFoundException e1) {
 			e1.printStackTrace();
 		}
+		try {
+			when(mockOrderService.updateOrder(orderid, mockOrder)).thenReturn(mockOrder);
+		} catch (ResourceNotFoundException e1) {
+			e1.printStackTrace();
+		}
 		when(mockExistingOrder.getOrderID()).thenReturn(orderid);
 		when(mockExistingOrder.getOrderTime()).thenReturn(LocalDateTime.now());
 		when(mockExistingOrder.getPerson()).thenReturn(mockPerson);
+		when(mockOrder.getPerson()).thenReturn(mockPerson);
+		when(mockOrder.getOrderTime()).thenReturn(LocalDateTime.now());
+		when(mockOrder.getEstimatedTime()).thenReturn(LocalDateTime.now());
+		when(mockOrder.getPlannedTime()).thenReturn(LocalDateTime.now());
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("localhost:8080/index");
+		when(mockReq.getRequestURL()).thenReturn(sb);
+		when(mockReq.getServletPath()).thenReturn("localhost:8080");
 		
 		testOrderController.verifyOrder(mockOrder, mockReq, mockResp, submitType);
 		
@@ -279,6 +296,13 @@ public class OrderControllerTest {
 		when(mockOrder.getOrderDets()).thenReturn(orderDetsTest);
 		when(mockOrderSaved.getOrderID()).thenReturn(1);
 		when(mockOrderService.createOrder(mockOrder)).thenReturn(mockOrderSaved);
+		when(mockOrderSaved.getPerson()).thenReturn(mockPerson);
+		when(mockOrderSaved.getOrderTime()).thenReturn(LocalDateTime.now());
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("localhost:8080/index");
+		when(mockReq.getRequestURL()).thenReturn(sb);
+		when(mockReq.getServletPath()).thenReturn("localhost:8080");
 		
 		testOrderController.verifyOrder(mockOrder, mockReq, mockResp, submitType);
 		
