@@ -15,6 +15,7 @@ public final class Constants {
 	public static final String RESET = "/reset";
 	public static final String RESET_PWD = "/reset-password";
 	public static final String LOGOUT = "/logout";
+	public static final String ERROR = "/error";
 	public static final String DASHBOARD = "/app/dashboard";
 	public static final String RESET_PWD_TOKEN = "/reset-password?token=";
 	public static final String ADMIN_TOKEN = "/verify-admin?token=";
@@ -42,6 +43,8 @@ public final class Constants {
 	public static final String INDEX_ERR = "indexErrMsg";
 	public static final String RESET_ERR = "resetErrMsg";
 	public static final String RESET_PWD_ERR = "resetPwdErrMsg";
+	public static final String ERROR_PAGE_TITLE = "errPageTitle";
+	public static final String ERROR_PAGE_MSG = "errPageMsg";
 	public static final String DASHBOARD_ERR = "dashboardErrMsg";
 	public static final String PRODUCT_ERR = "productErrMsg";
 	public static final String ADD_PRODUCT_ERR = "addProductErrMsg";
@@ -72,6 +75,18 @@ public final class Constants {
 	public static final String DELETE_ENTITY_ERR = "There was a problem deleting your %s. Please retry.";
 	public static final String AFTER_EDITABLE_TIME = "You cannot edit this order anymore. Please contact customer support or create a new order.";
 	public static final String ACCESS_DENIED = "You do not have permissions to view the requested page.";
+	
+	// Error page title
+	public static final String UNEXPECTED_ERROR_TITLE = "An unexpected error occurred";
+	public static final String FORBIDDEN_TITLE = " Forbidden";
+	public static final String PAGE_NOT_FOUND_TITLE = " Page not found";
+	public static final String INTERNAL_SERVER_ERROR_TITLE = " Internal server error";
+	
+	// Error page message
+	public static final String UNEXPECTED_ERROR_MESSAGE = "We are sorry but an unexpected error occurred. We are working to fix the problem.";
+	public static final String FORBIDDEN_MESSAGE = "You do not have permissions to view the requested page.";
+	public static final String PAGE_NOT_FOUND_MESSAGE = "The page you have requested could not be found.";
+	public static final String INTERNAL_SERVER_ERROR_MESSAGE = "Sorry, the server has encountered an internal error.";
 	
 	// Message
 	public static final String SUCCESS_REGISTER = "Successful! Please login with your selected username and password.";
