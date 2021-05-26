@@ -1,8 +1,12 @@
 package com.adriel.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,6 +28,7 @@ import com.adriel.service.MessageService;
 import com.adriel.service.OrderService;
 import com.adriel.service.PersonService;
 import com.adriel.utils.Constants;
+import com.adriel.utils.EmailSender;
 import com.adriel.utils.Redirections;
 import com.adriel.utils.Utils;
 
@@ -36,6 +41,8 @@ public class MessageController {
 	OrderService orderService;
 	@Autowired
 	PersonService personService;
+	@Autowired
+	EmailSender emailSender;
 	
 	private static final Integer FROM_ADMIN = 0;
 	private static final Integer FROM_CUSTOMER = 1;
@@ -126,7 +133,22 @@ public class MessageController {
 		}
 		msg.setSentTime(LocalDateTime.now());
 		msg.setOrder(order);
-		messageService.createMessage(msg);
+		msg = messageService.createMessage(msg);
+		
+		// Notification email
+		try {
+			if (personLoggedIn.getAdmin() == 1) {
+				emailSender.sendEmail(new ArrayList<String>(Arrays.asList(order.getPerson().getEmail())), new ArrayList<String>(), new ArrayList<String>(), 
+						Constants.EMAIL_MESSAGE_RECEIVED_TITLE, String.format(Constants.EMAIL_MESSAGE_RECEIVED_BODY, order.getPerson().getUsername(), String.valueOf(msg.getMessageID()), msg.getTitle(), msg.getBody(),
+								Constants.DATETIME_FORMATTER.format(msg.getSentTime()), Utils.getSiteURL(req) + Constants.INDEX));
+			} else {
+				emailSender.sendEmail(new ArrayList<String>(Arrays.asList(personLoggedIn.getEmail())), new ArrayList<String>(), new ArrayList<String>(), 
+						Constants.EMAIL_MESSAGE_SENT_TITLE, String.format(Constants.EMAIL_MESSAGE_SENT_BODY, personLoggedIn.getUsername(), String.valueOf(msg.getMessageID()), msg.getTitle(), msg.getBody(), 
+								Constants.DATETIME_FORMATTER.format(msg.getSentTime())));
+			}
+		} catch (UnsupportedEncodingException | MessagingException e) {
+			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, Constants.EMAIL_SEND_ERROR);
+		}
 		Redirections.redirect(req, resp, Constants.MESSAGE.replaceAll("\\{orderid\\}", orderid), Constants.MESSAGE_ERR, Constants.SUCCESS_SEND_MESSAGE);
 	}
 	

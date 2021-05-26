@@ -1,10 +1,13 @@
 package com.adriel.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,6 +31,7 @@ import com.adriel.service.OrderService;
 import com.adriel.service.PersonService;
 import com.adriel.service.ProductService;
 import com.adriel.utils.Constants;
+import com.adriel.utils.EmailSender;
 import com.adriel.utils.Redirections;
 import com.adriel.utils.Utils;
 
@@ -42,6 +46,8 @@ public class OrderController {
 	ProductService productService;
 	@Autowired
 	PersonService personService;
+	@Autowired
+	EmailSender emailSender;
 	
 	private static final Integer STATUS_OK = 1;
 	private static final Integer STATUS_NOT_OK = 2;
@@ -209,7 +215,17 @@ public class OrderController {
 				orderDetail.setOrder(order);
 				orderDetailService.createOrderDetail(orderDetail);
 			}
-			req.getSession().setAttribute("totalCost", Constants.TWO_DECIMAL_DIGITS_FORMATTER.format(Utils.findTotalCost(orderDetailsRemoveEmpty)));
+			
+			String totalCost = Constants.TWO_DECIMAL_DIGITS_FORMATTER.format(Utils.findTotalCost(orderDetailsRemoveEmpty));
+			req.getSession().setAttribute("totalCost", totalCost);
+			
+			try {
+				emailSender.sendEmail(new ArrayList<String>(Arrays.asList(orderSaved.getPerson().getEmail())), new ArrayList<String>(), new ArrayList<String>(),
+						String.format(Constants.EMAIL_ORDER_SUCCESS_TITLE, orderSaved.getOrderID()), String.format(Constants.EMAIL_ORDER_SUCCESS_BODY, orderSaved.getPerson().getUsername(), String.valueOf(orderSaved.getOrderID()), getOrderDetailEmailList(orderDetailsRemoveEmpty), 
+								totalCost, Constants.DATETIME_FORMATTER.format(orderSaved.getOrderTime()), Utils.getSiteURL(req) + Constants.INDEX));
+			} catch (UnsupportedEncodingException | MessagingException e) {
+				Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, Constants.EMAIL_SEND_ERROR);
+			}
 			Redirections.redirect(req, resp, Constants.EDIT_ORDER.replaceAll("\\{orderid\\}", String.valueOf(orderSaved.getOrderID())).replaceAll("\\{submitType\\}", "Edit"), Constants.EDIT_ORDER_ERR, String.format(Constants.SUCCESS_CREATE_ENTITY, "order"));
 		} else if ("Schedule".equals(submitType)) {
 			try {
@@ -217,10 +233,19 @@ public class OrderController {
 				order.setOrderID(existingOrder.getOrderID());
 				order.setPerson(existingOrder.getPerson());
 				order.setOrderTime(existingOrder.getOrderTime());
-				orderService.updateOrder(order.getOrderID(), order);
+				Order orderSaved = orderService.updateOrder(order.getOrderID(), order);
+				List<OrderDetail> orderDetailsRemoveEmpty = removeEmptyDetail(orderSaved);
+				emailSender.sendEmail(new ArrayList<String>(Arrays.asList(orderSaved.getPerson().getEmail())), new ArrayList<String>(), new ArrayList<String>(),
+						String.format(Constants.EMAIL_ORDER_SCHEDULED_TITLE, orderSaved.getOrderID(), setStatusString(orderSaved.getStatus())), 
+						String.format(Constants.EMAIL_ORDER_SCHEDULED_BODY, orderSaved.getPerson().getUsername(), 
+								String.valueOf(orderSaved.getOrderID()), getOrderDetailEmailList(orderDetailsRemoveEmpty), Constants.TWO_DECIMAL_DIGITS_FORMATTER.format(Utils.findTotalCost(orderDetailsRemoveEmpty)), 
+								Constants.DATETIME_FORMATTER.format(orderSaved.getOrderTime()), Constants.DATETIME_FORMATTER.format(orderSaved.getPlannedTime()), Constants.DATETIME_FORMATTER.format(orderSaved.getEstimatedTime()), orderSaved.getLocation(), 
+								setStatusString(orderSaved.getStatus()), Utils.getSiteURL(req) + Constants.INDEX));
 				Redirections.redirect(req, resp, Constants.EDIT_ORDER.replaceAll("\\{orderid\\}", String.valueOf(order.getOrderID())).replaceAll("\\{submitType\\}", "Schedule"), Constants.EDIT_ORDER_ERR, String.format(Constants.SUCCESS_EDIT_ENTITY, "order"));
 			} catch (ResourceNotFoundException e) {
 				Redirections.redirect(req, resp, Constants.ADD_ORDER, Constants.EDIT_ORDER_ERR, String.format(Constants.EDIT_ENTITY_ERR, "order"));
+			} catch (UnsupportedEncodingException | MessagingException e) {
+				Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, Constants.EMAIL_SEND_ERROR);
 			}
 		} else if ("Edit".equals(submitType)) {
 			order.setOrderTime(LocalDateTime.now());
@@ -241,6 +266,25 @@ public class OrderController {
 			}
 		}
 	
+	}
+	
+	private String setStatusString(int status) {
+		switch (status) {
+		case 1:
+			return "On time";
+		case 2:
+			return "Delayed";
+		default:
+			return "Not assigned";
+		}
+	}
+	
+	private String getOrderDetailEmailList(List<OrderDetail> orderDetailsRemoveEmpty) {
+		String orderDetailEmail = "";
+		for (OrderDetail orderDetail : orderDetailsRemoveEmpty) {
+			orderDetailEmail += String.format(Constants.EMAIL_TABLE_ROW, orderDetail.getProduct().getNameAndUnitPrice(), orderDetail.getQuantity());
+		}
+		return orderDetailEmail;
 	}
 	
 	private List<OrderDetail> removeEmptyDetail(Order order) {

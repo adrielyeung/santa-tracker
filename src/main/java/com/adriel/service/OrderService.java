@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.adriel.entity.Order;
@@ -30,7 +29,7 @@ public class OrderService {
 		return orderRepository.save(order);
 	}
 	
-	public ResponseEntity<Order> updateOrder(int orderID, Order orderDetails) throws ResourceNotFoundException {
+	public Order updateOrder(int orderID, Order orderDetails) throws ResourceNotFoundException {
 		Order order = orderRepository.findById(orderID)
 				.orElseThrow(() -> new ResourceNotFoundException("Order not found for this id."));
 		
@@ -39,8 +38,7 @@ public class OrderService {
 		order.setEstimatedTime(orderDetails.getEstimatedTime());
 		order.setStatus(orderDetails.getStatus());
 		order.setLocation(orderDetails.getLocation());
-		final Order updatedOrder = orderRepository.save(order);
-		return ResponseEntity.ok(updatedOrder);
+		return orderRepository.save(order);
 	}
 	
 	public Map<String, Boolean> deleteOrder(Integer orderID) throws ResourceNotFoundException {
