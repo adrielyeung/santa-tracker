@@ -19,4 +19,10 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
 			+ "with o.person = p "
 			+ "where p.personID = :personId")
 	List<Message> findAllMessagesByPersonId(@Param("personId") int personId);
+	
+	@Query("select m from Message m "
+			+ "inner join Order o "
+			+ "with m.order = o "
+			+ "where o.demo = :demo")
+	List<Message> findAllMessagesByOrderDemo(@Param("demo") int demo);
 }

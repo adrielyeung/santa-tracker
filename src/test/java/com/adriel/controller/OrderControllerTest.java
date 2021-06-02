@@ -77,8 +77,10 @@ public class OrderControllerTest {
 	@Test
 	public void whenGoToNewOrderPageCalled_thenReturnEditOrderString() {
 		
+		int demo = 0;
+		
 		when(mockPerson.getAdmin()).thenReturn(0);
-		when(mockProductService.getAllProducts()).thenReturn(mockProductList);
+		when(mockProductService.getAllProducts(demo)).thenReturn(mockProductList);
 		
 		String ret = testOrderController.goToNewOrderPage(mockMod, mockReq, mockResp);
 		
@@ -91,9 +93,11 @@ public class OrderControllerTest {
 	@Test
 	public void whenGoToOrderPageCalled_thenReturnOrderString() {
 		
+		int demo = 0;
+		
 		when(mockPerson.getPersonOrders()).thenReturn(mockOrderList);
 		try {
-			when(mockPersonService.getAllCustomers()).thenReturn(mockPersonList);
+			when(mockPersonService.getAllCustomers(demo)).thenReturn(mockPersonList);
 		} catch (ResourceNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -110,6 +114,7 @@ public class OrderControllerTest {
 	@Test
 	public void whenLoadCustomerDataInOrderPageCalled_thenReturnOrderStringWithList() {
 		
+		int demo = 0;
 		Person mockPersonSelected = mock(Person.class);
 		when(mockPerson.getPersonID()).thenReturn(1);
 		try {
@@ -118,7 +123,7 @@ public class OrderControllerTest {
 			e1.printStackTrace();
 		}
 		try {
-			when(mockPersonService.getAllCustomers()).thenReturn(mockPersonList);
+			when(mockPersonService.getAllCustomers(demo)).thenReturn(mockPersonList);
 		} catch (ResourceNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -135,8 +140,10 @@ public class OrderControllerTest {
 	@Test
 	public void whenGoToUpdateOrderPageCalled_TypeAdd_thenReturnEditOrderString() {
 		
+		int demo = 0;
+		
 		when(mockPerson.getAdmin()).thenReturn(0);
-		when(mockProductService.getAllProducts()).thenReturn(mockProductList);
+		when(mockProductService.getAllProducts(demo)).thenReturn(mockProductList);
 		
 		String submitType = "Add";
 		String orderid = "1";
@@ -158,8 +165,10 @@ public class OrderControllerTest {
 	@Test
 	public void whenGoToUpdateOrderPageCalled_TypeEdit_thenReturnEditOrderString() {
 		
+		int demo = 0;
+		
 		when(mockPerson.getAdmin()).thenReturn(0);
-		when(mockProductService.getAllProducts()).thenReturn(mockProductList);
+		when(mockProductService.getAllProducts(demo)).thenReturn(mockProductList);
 		when(mockOrder.getOrderTime()).thenReturn(LocalDateTime.now());
 		
 		String submitType = "Edit";
@@ -182,8 +191,9 @@ public class OrderControllerTest {
 	@Test
 	public void whenGoToUpdateOrderPageCalled_TypeEdit_AfterEditableTime_thenReturnEditOrderString() {
 		
+		int demo = 0;
 		when(mockPerson.getAdmin()).thenReturn(0);
-		when(mockProductService.getAllProducts()).thenReturn(mockProductList);
+		when(mockProductService.getAllProducts(demo)).thenReturn(mockProductList);
 		// Start of calendar, must be before now
 		when(mockOrder.getOrderTime()).thenReturn(LocalDateTime.MIN);
 		
@@ -207,8 +217,10 @@ public class OrderControllerTest {
 	@Test
 	public void whenGoToUpdateOrderPageCalled_TypeSchedule_thenReturnEditOrderString() {
 		
+		int demo = 0;
+		
 		when(mockPerson.getAdmin()).thenReturn(1);
-		when(mockProductService.getAllProducts()).thenReturn(mockProductList);
+		when(mockProductService.getAllProducts(demo)).thenReturn(mockProductList);
 		
 		String submitType = "Schedule";
 		String orderid = "1";

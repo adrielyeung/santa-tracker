@@ -35,6 +35,8 @@
   	<c:if test="${type == 'Schedule'}">
 	  	<sf:label path="personID"><b>Customer's ID</b></sf:label>
 	    <sf:input type="text" path="personID" id="personID" name="personID" value="${order.person.personID}" readonly="true" />
+	    <p><b>Customer's username</b></p>
+	    <p>${order.person.username}</p>
 	    <sf:label path="plannedTime"><b>Planned time</b></sf:label>
 	    <sf:input type="datetime-local" path="plannedTime" id="plannedTime" name="plannedTime" onchange="setEstimatedTime(this)" required="required" />
 	    <sf:label path="estimatedTime"><b>Estimated time</b></sf:label>

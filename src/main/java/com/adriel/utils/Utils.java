@@ -8,6 +8,7 @@ import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.adriel.entity.Order;
 import com.adriel.entity.OrderDetail;
 import com.adriel.entity.Person;
 
@@ -55,6 +56,26 @@ public class Utils {
 		}
 		return errMsg;
 		
+	}
+	
+	public static boolean checkAccess(Order order, Person person, HttpServletRequest req) {
+		
+		// Order is requested by the same user
+		if (order.getPerson().getUsername().equals(person.getUsername())) {
+			return true;
+		}
+		
+		// Admin allowed to view all items
+		if (person.getDemo() == 0 && person.getAdmin() == 1) {
+			return true;
+		}
+		
+		// Demo admin not allowed to view non-demo items
+		if (person.getDemo() == 1 && person.getAdmin() == 1 && order.getDemo() == 1) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public static boolean isLoggedOut(HttpServletRequest req) {

@@ -67,6 +67,11 @@ public class OrderController {
 			return null;
 		}
 		
+		if (((Person) req.getSession().getAttribute("personLoggedIn")).getDemo() == 1) {
+			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, Constants.DEMO_ACCESS_DENIED);
+			return null;
+		}
+		
 		String errMsg = checkAccess(null, "Add", (Person) req.getSession().getAttribute("personLoggedIn"));
 		if (!"".equals(errMsg)) {
 			Redirections.redirect(req, resp, Constants.ORDER, Constants.ORDER_ERR, errMsg);
@@ -82,7 +87,7 @@ public class OrderController {
 		
 		model.addAttribute("order", newOrder);
 		
-		List<Product> productList = productService.getAllProducts();
+		List<Product> productList = productService.getAllProducts(0);
 		req.setAttribute("productList", productList);
 		
 		req.setAttribute("type", "Add");
@@ -103,10 +108,11 @@ public class OrderController {
 			Collections.sort(((Person) req.getSession().getAttribute("personLoggedIn")).getPersonOrders());
 			model.addAttribute("person", EntityFactory.getEntity(SantaTrackerEntityType.PERSON));
 			try {
-				req.setAttribute("customerList", personService.getAllCustomers());
+				req.setAttribute("customerList", personService.getAllCustomers(((Person) req.getSession().getAttribute("personLoggedIn")).getDemo()));
 			} catch (ResourceNotFoundException e) {
 				Redirections.redirect(req, resp, Constants.ORDER, Constants.ORDER_ERR, Constants.CUSTOMER_NOT_FOUND);
 			}
+			
 			return "App/order";
 		} else {
 			Redirections.redirect(req, resp, Constants.INDEX, Constants.INDEX_ERR, Constants.SESSION_EXPIRED);
@@ -135,7 +141,7 @@ public class OrderController {
 			model.addAttribute("person", personSelected);
 			req.setAttribute("personSelected", personSelected);
 			try {
-				req.setAttribute("customerList", personService.getAllCustomers());
+				req.setAttribute("customerList", personService.getAllCustomers(((Person) req.getSession().getAttribute("personLoggedIn")).getDemo()));
 			} catch (ResourceNotFoundException e) {
 				Redirections.redirect(req, resp, Constants.ORDER, Constants.ORDER_ERR, Constants.CUSTOMER_NOT_FOUND);
 			}
@@ -151,6 +157,11 @@ public class OrderController {
 		
 		if (Utils.isLoggedOut(req)) {
 			Redirections.redirect(req, resp, Constants.INDEX, Constants.INDEX_ERR, Constants.SESSION_EXPIRED);
+			return null;
+		}
+		
+		if (((Person) req.getSession().getAttribute("personLoggedIn")).getDemo() == 1 && !"Schedule".equals(submitType)) {
+			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, Constants.DEMO_ACCESS_DENIED);
 			return null;
 		}
 		
@@ -171,7 +182,7 @@ public class OrderController {
 			
 			model.addAttribute("order", orderToUpdate);
 			
-			List<Product> productList = productService.getAllProducts();
+			List<Product> productList = productService.getAllProducts(0);
 			req.setAttribute("productList", productList);
 			
 			req.setAttribute("type", submitType);
@@ -219,14 +230,16 @@ public class OrderController {
 			String totalCost = Constants.TWO_DECIMAL_DIGITS_FORMATTER.format(Utils.findTotalCost(orderDetailsRemoveEmpty));
 			req.getSession().setAttribute("totalCost", totalCost);
 			
+			// Email notification
 			try {
 				emailSender.sendEmail(new ArrayList<String>(Arrays.asList(orderSaved.getPerson().getEmail())), new ArrayList<String>(), new ArrayList<String>(),
 						String.format(Constants.EMAIL_ORDER_SUCCESS_TITLE, orderSaved.getOrderID()), String.format(Constants.EMAIL_ORDER_SUCCESS_BODY, orderSaved.getPerson().getUsername(), String.valueOf(orderSaved.getOrderID()), getOrderDetailEmailList(orderDetailsRemoveEmpty), 
 								totalCost, Constants.DATETIME_FORMATTER.format(orderSaved.getOrderTime()), Utils.getSiteURL(req) + Constants.INDEX));
+				Redirections.redirect(req, resp, Constants.EDIT_ORDER.replaceAll("\\{orderid\\}", String.valueOf(orderSaved.getOrderID())).replaceAll("\\{submitType\\}", "Edit"), Constants.EDIT_ORDER_ERR, String.format(Constants.SUCCESS_CREATE_ENTITY, "order"));
 			} catch (UnsupportedEncodingException | MessagingException e) {
-				Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, Constants.EMAIL_SEND_ERROR);
+				Redirections.redirect(req, resp, Constants.EDIT_ORDER.replaceAll("\\{orderid\\}", String.valueOf(orderSaved.getOrderID())).replaceAll("\\{submitType\\}", "Edit"), Constants.EDIT_ORDER_ERR, String.format(Constants.EMAIL_SEND_ERROR_SUCCESS_CREATE_EDIT_ENTITY, "order", "created"));
 			}
-			Redirections.redirect(req, resp, Constants.EDIT_ORDER.replaceAll("\\{orderid\\}", String.valueOf(orderSaved.getOrderID())).replaceAll("\\{submitType\\}", "Edit"), Constants.EDIT_ORDER_ERR, String.format(Constants.SUCCESS_CREATE_ENTITY, "order"));
+			
 		} else if ("Schedule".equals(submitType)) {
 			try {
 				Order existingOrder = orderService.getOrderById(order.getOrderID());
@@ -235,6 +248,12 @@ public class OrderController {
 				order.setOrderTime(existingOrder.getOrderTime());
 				Order orderSaved = orderService.updateOrder(order.getOrderID(), order);
 				List<OrderDetail> orderDetailsRemoveEmpty = removeEmptyDetail(orderSaved);
+				
+				// Email notification (not applicable to demo users)
+				if (orderSaved.getPerson().getDemo() == 1) {
+					Redirections.redirect(req, resp, Constants.EDIT_ORDER.replaceAll("\\{orderid\\}", String.valueOf(order.getOrderID())).replaceAll("\\{submitType\\}", "Schedule"), Constants.EDIT_ORDER_ERR, String.format(Constants.SUCCESS_EDIT_ENTITY, "order"));
+					return;
+				}
 				emailSender.sendEmail(new ArrayList<String>(Arrays.asList(orderSaved.getPerson().getEmail())), new ArrayList<String>(), new ArrayList<String>(),
 						String.format(Constants.EMAIL_ORDER_SCHEDULED_TITLE, orderSaved.getOrderID(), setStatusString(orderSaved.getStatus())), 
 						String.format(Constants.EMAIL_ORDER_SCHEDULED_BODY, orderSaved.getPerson().getUsername(), 
@@ -245,7 +264,7 @@ public class OrderController {
 			} catch (ResourceNotFoundException e) {
 				Redirections.redirect(req, resp, Constants.ADD_ORDER, Constants.EDIT_ORDER_ERR, String.format(Constants.EDIT_ENTITY_ERR, "order"));
 			} catch (UnsupportedEncodingException | MessagingException e) {
-				Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, Constants.EMAIL_SEND_ERROR);
+				Redirections.redirect(req, resp, Constants.EDIT_ORDER.replaceAll("\\{orderid\\}", String.valueOf(order.getOrderID())).replaceAll("\\{submitType\\}", "Schedule"), Constants.EDIT_ORDER_ERR, String.format(Constants.EMAIL_SEND_ERROR_SUCCESS_CREATE_EDIT_ENTITY, "order", "edited"));
 			}
 		} else if ("Edit".equals(submitType)) {
 			order.setOrderTime(LocalDateTime.now());

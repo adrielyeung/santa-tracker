@@ -28,6 +28,7 @@ public class Product extends SantaTrackerEntity {
 	@Size(max = 100)
 	private String spec;
 	private double unitPrice;
+	private int demo;
 	
 	@OneToMany(mappedBy = "product")
 	private List<OrderDetail> prodDets = new ArrayList<>();
@@ -69,6 +70,14 @@ public class Product extends SantaTrackerEntity {
 	
 	public String getNameAndUnitPrice() {
 		return name + " - $" + String.valueOf(unitPrice);
+	}
+
+	public int getDemo() {
+		return demo;
+	}
+
+	public void setDemo(int demo) {
+		this.demo = demo;
 	}
 
 	public int getProductID() {

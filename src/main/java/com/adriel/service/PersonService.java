@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.adriel.entity.Person;
 import com.adriel.exception.ResourceNotFoundException;
 import com.adriel.repository.PersonRepository;
+import com.adriel.utils.Constants;
 import com.adriel.utils.Utils;
 
 @Service
@@ -29,8 +30,7 @@ public class PersonService {
 		return personRepository.save(person);
 	}
 	
-	public Person updatePerson(Integer personID, Person personDetails) 
-			throws ResourceNotFoundException {
+	public Person updatePerson(Integer personID, Person personDetails) throws ResourceNotFoundException {
 		Person person = personRepository.findById(personID)
 				.orElseThrow(() -> new ResourceNotFoundException("Person not found for this id."));
 		
@@ -44,8 +44,7 @@ public class PersonService {
 		return personRepository.save(person);
 	}
 	
-	public Map<String, Boolean> deletePerson(Integer personID)
-			throws ResourceNotFoundException {
+	public Map<String, Boolean> deletePerson(Integer personID) throws ResourceNotFoundException {
 		Person person = personRepository.findById(personID)
 				.orElseThrow(() -> new ResourceNotFoundException("Person not found for this id."));
 		
@@ -55,8 +54,7 @@ public class PersonService {
 		return response;
 	}
 
-	public Person getPersonByUsername(String username) 
-			throws ResourceNotFoundException {
+	public Person getPersonByUsername(String username) throws ResourceNotFoundException {
 		List<Person> personList = personRepository.findByUsername(username);
 		if (personList == null || personList.size() == 0) {
 			throw new ResourceNotFoundException("Person not found for this username.");
@@ -64,8 +62,7 @@ public class PersonService {
 		return personList.get(0);
 	}
 	
-	public Person getPersonByEmail(String email) 
-			throws ResourceNotFoundException {
+	public Person getPersonByEmail(String email) throws ResourceNotFoundException {
 		List<Person> personList = personRepository.findByEmail(email);
 		if (personList == null || personList.size() == 0) {
 			throw new ResourceNotFoundException("Person not found for this email.");
@@ -73,8 +70,7 @@ public class PersonService {
 		return personList.get(0);
 	}
 	
-	public Person getPersonByResetPasswordToken(String resetPasswordToken) 
-			throws ResourceNotFoundException {
+	public Person getPersonByResetPasswordToken(String resetPasswordToken) throws ResourceNotFoundException {
 		List<Person> personList = personRepository.findByResetPasswordToken(resetPasswordToken);
 		if (personList == null || personList.size() == 0) {
 			throw new ResourceNotFoundException("Person not found for this reset password token.");
@@ -82,8 +78,7 @@ public class PersonService {
 		return personList.get(0);
 	}
 	
-	public Person getPersonByAdminToken(String adminToken) 
-			throws ResourceNotFoundException {
+	public Person getPersonByAdminToken(String adminToken) throws ResourceNotFoundException {
 		List<Person> personList = personRepository.findByAdminToken(adminToken);
 		if (personList == null || personList.size() == 0) {
 			throw new ResourceNotFoundException("Person not found for this reset password token.");
@@ -91,8 +86,7 @@ public class PersonService {
 		return personList.get(0);
 	}
 	
-	public List<Person> getAllAdminPersons() 
-			throws ResourceNotFoundException {
+	public List<Person> getAllAdminPersons() throws ResourceNotFoundException {
 		List<Person> personList = personRepository.findByAdmin(1);
 		if (personList == null || personList.size() == 0) {
 			throw new ResourceNotFoundException("No admin found.");
@@ -100,19 +94,26 @@ public class PersonService {
 		return personList;
 	}
 	
-	public List<Person> getAllCustomers() 
-			throws ResourceNotFoundException {
-		List<Person> personList = personRepository.findByAdmin(0);
-		if (personList == null || personList.size() == 0) {
-			throw new ResourceNotFoundException("No customer found.");
+	public List<Person> getAllCustomers(int demo) throws ResourceNotFoundException {
+		List<Person> customerList = new ArrayList<>();
+		if (demo == 0) {
+			List<Person> personList = personRepository.findByAdmin(0);
+			if (personList == null || personList.size() == 0) {
+				throw new ResourceNotFoundException("No customer found.");
+			}
+			
+			for (Person person : personList) {
+				if ((person.getAdminToken() == null || "".equals(person.getAdminToken())) && person.getDemo() == 0) {
+					customerList.add(person);
+				}
+			}
+			if (customerList.size() == 0) {
+				throw new ResourceNotFoundException("No customer found.");
+			}
+		} else {
+			customerList = personRepository.findByUsername(Constants.DEMO_CUSTOMER);
 		}
 		
-		List<Person> customerList = new ArrayList<>();
-		for (Person person : personList) {
-			if (person.getAdminToken() == null || "".equals(person.getAdminToken())) {
-				customerList.add(person);
-			}
-		}
 		return customerList;
 	}
 	

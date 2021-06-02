@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.adriel.entity.Message;
-import com.adriel.entity.Order;
 import com.adriel.entity.Person;
 import com.adriel.exception.ResourceNotFoundException;
 import com.adriel.service.MessageService;
@@ -42,7 +41,7 @@ public class MessageDetailController {
 			return null;
 		}
 		
-		if (!checkAccess(message.getOrder(), (Person)req.getSession().getAttribute("personLoggedIn"), req)) {
+		if (!Utils.checkAccess(message.getOrder(), (Person)req.getSession().getAttribute("personLoggedIn"), req)) {
 			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, String.format(Constants.MESSAGE_NOT_FOUND, msgid));
 			return null;
 		}
@@ -52,18 +51,4 @@ public class MessageDetailController {
 		
 	}
 	
-	private boolean checkAccess(Order order, Person person, HttpServletRequest req) {
-		
-		// Order is requested by the same user
-		if (order.getPerson().getUsername().equals(person.getUsername())) {
-			return true;
-		}
-		
-		// Admin allowed to view all orders
-		if (person.getAdmin() == 1) {
-			return true;
-		}
-		
-		return false;
-	}
 }
