@@ -11,9 +11,14 @@ public final class Constants {
 	
 	public static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 	
+	// Roles
+	public static final String DEMO_CUSTOMER = "Demo customer";
+	public static final String DEMO_ADMIN = "Demo admin";
+	
 	// Paths
 	public static final String ROOT = "/";
 	public static final String INDEX = "/index";
+	public static final String DEMO = "/demo";
 	public static final String REGISTER = "/register";
 	public static final String RESET = "/reset";
 	public static final String RESET_PWD = "/reset-password";
@@ -23,6 +28,7 @@ public final class Constants {
 	public static final String RESET_PWD_TOKEN = "/reset-password?token=";
 	public static final String ADMIN_TOKEN = "/verify-admin?token=";
 	public static final String VERIFY_LOGIN = "/verify-login";
+	public static final String VERIFY_DEMO = "/verify-demo";
 	public static final String VERIFY_REGISTER = "/verify-register";
 	public static final String VERIFY_RESET_EMAIL = "/verify-reset-email";
 	public static final String VERIFY_RESET_PWD = "/verify-reset-password";
@@ -65,6 +71,7 @@ public final class Constants {
 	public static final String MESSAGE_NOT_FOUND = "Cannot access message #%s.";
 	public static final String PERSON_NOT_FOUND_TOKEN_RESET = "An error occurred with this link. Please input your email address to send another reset password email.";
 	public static final String PERSON_NOT_FOUND_TOKEN_ADMIN = "An error occurred with this link.";
+	public static final String EMAIL_SEND_ERROR_SUCCESS_CREATE_EDIT_ENTITY = "Your new %s is successfully %s but notification email could not be sent. Please accept our apologies.";
 	public static final String EMAIL_SEND_ERROR = "Email could not be sent. Please retry.";
 	public static final String USERNAME_TAKEN = "Username is already taken, please choose another one.";
 	public static final String EMAIL_TAKEN = "Email is already used for registration, please choose another one.";
@@ -78,6 +85,7 @@ public final class Constants {
 	public static final String DELETE_ENTITY_ERR = "There was a problem deleting your %s. Please retry.";
 	public static final String AFTER_EDITABLE_TIME = "You cannot edit this order anymore. Please contact customer support or create a new order.";
 	public static final String ACCESS_DENIED = "You do not have permissions to view the requested page.";
+	public static final String DEMO_ACCESS_DENIED = "As a demo user, you cannot add/edit any orders/products. Please register an actual account to perform the above.";
 	
 	// Error page title
 	public static final String UNEXPECTED_ERROR_TITLE = "An unexpected error occurred";

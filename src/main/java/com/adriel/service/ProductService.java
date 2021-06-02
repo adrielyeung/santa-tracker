@@ -16,8 +16,8 @@ public class ProductService {
 	@Autowired
 	private ProductRepository productRepository;
 	
-	public List<Product> getAllProducts() {
-		return productRepository.findAll();
+	public List<Product> getAllProducts(int demo) {
+		return productRepository.findByDemo(demo);
 	}
 	
 	public Product getProductById(Integer productID) throws ResourceNotFoundException {

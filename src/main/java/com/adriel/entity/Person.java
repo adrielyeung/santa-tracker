@@ -31,6 +31,7 @@ public class Person extends SantaTrackerEntity {
 	private String email;
 	private String address;
 	private int admin;
+	private int demo;
 	private String resetPasswordToken;
 	private String adminToken;
 	
@@ -96,6 +97,14 @@ public class Person extends SantaTrackerEntity {
 
 	public void setAdmin(int admin) {
 		this.admin = admin;
+	}
+
+	public int getDemo() {
+		return demo;
+	}
+
+	public void setDemo(int demo) {
+		this.demo = demo;
 	}
 
 	public String getResetPasswordToken() {

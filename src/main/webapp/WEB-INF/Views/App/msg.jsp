@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="UTF-8" isELIgnored="false"%>
+	pageEncoding="ISO-8859-1" isELIgnored="false"%>
 	
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
@@ -54,7 +54,7 @@
 		    					<c:otherwise>
 								<c:choose>
 									<c:when test='${personLoggedIn.admin == 0}'>You</c:when>
-									<c:when test='${personLoggedIn.admin == 1}'>Customer</c:when>
+									<c:when test='${personLoggedIn.admin == 1}'>#${order.person.personID} - ${order.person.username}</c:when>
 								</c:choose>
 								</c:otherwise></c:choose></td>
 		    <td class="tg-0lax">${msg.title}</td>

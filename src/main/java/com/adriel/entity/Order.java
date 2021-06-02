@@ -31,6 +31,7 @@ public class Order extends SantaTrackerEntity implements Comparable<Order> {
 	private LocalDateTime estimatedTime;
 	private int status;
 	private String location;
+	private int demo;
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "personID", referencedColumnName = "personID")
@@ -103,6 +104,14 @@ public class Order extends SantaTrackerEntity implements Comparable<Order> {
 
 	public void setLocation(String location) {
 		this.location = location;
+	}
+
+	public int getDemo() {
+		return demo;
+	}
+
+	public void setDemo(int demo) {
+		this.demo = demo;
 	}
 
 	public int getOrderID() {

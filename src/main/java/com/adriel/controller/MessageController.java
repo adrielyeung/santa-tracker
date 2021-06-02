@@ -65,7 +65,7 @@ public class MessageController {
 		}
 		req.setAttribute("order", order);
 		
-		if (!checkAccess(order, ((Person)req.getSession().getAttribute("personLoggedIn")), req)) {
+		if (!Utils.checkAccess(order, ((Person)req.getSession().getAttribute("personLoggedIn")), req)) {
 			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, String.format(Constants.ORDER_NOT_FOUND, orderid));
 			return null;
 		}
@@ -90,7 +90,7 @@ public class MessageController {
 		}
 		req.setAttribute("order", order);
 		
-		if (!checkAccess(order, ((Person)req.getSession().getAttribute("personLoggedIn")), req)) {
+		if (!Utils.checkAccess(order, ((Person)req.getSession().getAttribute("personLoggedIn")), req)) {
 			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, String.format(Constants.ORDER_NOT_FOUND, orderid));
 			return null;
 		}
@@ -121,7 +121,7 @@ public class MessageController {
 		}
 		req.setAttribute("order", order);
 		
-		if (!checkAccess(order, personLoggedIn, req)) {
+		if (!Utils.checkAccess(order, personLoggedIn, req)) {
 			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, String.format(Constants.ORDER_NOT_FOUND, orderid));
 			return;
 		}
@@ -135,7 +135,12 @@ public class MessageController {
 		msg.setOrder(order);
 		msg = messageService.createMessage(msg);
 		
-		// Notification email
+		// Notification email (not applicable to demo users)
+		if (personLoggedIn.getDemo() == 1) {
+			Redirections.redirect(req, resp, Constants.MESSAGE.replaceAll("\\{orderid\\}", orderid), Constants.MESSAGE_ERR, Constants.SUCCESS_SEND_MESSAGE);
+			return;
+		}
+		
 		try {
 			if (personLoggedIn.getAdmin() == 1) {
 				emailSender.sendEmail(new ArrayList<String>(Arrays.asList(order.getPerson().getEmail())), new ArrayList<String>(), new ArrayList<String>(), 
@@ -146,24 +151,11 @@ public class MessageController {
 						Constants.EMAIL_MESSAGE_SENT_TITLE, String.format(Constants.EMAIL_MESSAGE_SENT_BODY, personLoggedIn.getUsername(), String.valueOf(msg.getMessageID()), msg.getTitle(), msg.getBody(), 
 								Constants.DATETIME_FORMATTER.format(msg.getSentTime())));
 			}
+			Redirections.redirect(req, resp, Constants.MESSAGE.replaceAll("\\{orderid\\}", orderid), Constants.MESSAGE_ERR, Constants.SUCCESS_SEND_MESSAGE);
 		} catch (UnsupportedEncodingException | MessagingException e) {
-			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, Constants.EMAIL_SEND_ERROR);
+			Redirections.redirect(req, resp, Constants.MESSAGE.replaceAll("\\{orderid\\}", orderid), Constants.MESSAGE_ERR, String.format(Constants.EMAIL_SEND_ERROR_SUCCESS_CREATE_EDIT_ENTITY, "message", "sent"));
 		}
-		Redirections.redirect(req, resp, Constants.MESSAGE.replaceAll("\\{orderid\\}", orderid), Constants.MESSAGE_ERR, Constants.SUCCESS_SEND_MESSAGE);
+		
 	}
 	
-	private boolean checkAccess(Order order, Person person, HttpServletRequest req) {
-		
-		// Order is requested by the same user
-		if (order.getPerson().getUsername().equals(person.getUsername())) {
-			return true;
-		}
-		
-		// Admin allowed to view all orders
-		if (person.getAdmin() == 1) {
-			return true;
-		}
-		
-		return false;
-	}
 }

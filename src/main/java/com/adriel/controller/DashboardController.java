@@ -59,7 +59,7 @@ public class DashboardController {
 			
 		} else {
 			// If admin, display 10 most recent conversations only across all orders
-			List<Message> personMsg = messageService.getAllMessages();
+			List<Message> personMsg = messageService.getAllMessages(((Person) req.getSession().getAttribute("personLoggedIn")).getDemo());
 			
 			if (personMsg == null) {
 				Redirections.redirect(req, resp, Constants.INDEX, Constants.INDEX_ERR, Constants.SESSION_EXPIRED);

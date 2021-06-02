@@ -91,10 +91,28 @@ public class ProductControllerTest {
 	}
 	
 	@Test
-	public void whenGoToProductPageCalled_thenReturnProductString() {
+	public void whenGoToProductPageCalled_ActualUser_thenReturnProductString() {
 		
-		when(mockProductService.getAllProducts()).thenReturn(mockProductList);
+		int demo = 0;
+		
+		when(mockProductService.getAllProducts(demo)).thenReturn(mockProductList);
 		when(mockPerson.getAdmin()).thenReturn(1);
+		
+		String ret = testProductController.goToProductPage(mockReq, mockResp);
+		
+		InOrder inOrder = inOrder(mockReq, mockResp, mockSess);
+		inOrder.verify(mockSess).setAttribute("products", mockProductList);
+		assertEquals("App/product", ret);
+	}
+	
+	@Test
+	public void whenGoToProductPageCalled_DemoUser_thenReturnProductString() {
+		
+		int demo = 1;
+		
+		when(mockProductService.getAllProducts(demo)).thenReturn(mockProductList);
+		when(mockPerson.getAdmin()).thenReturn(1);
+		when(mockPerson.getDemo()).thenReturn(1);
 		
 		String ret = testProductController.goToProductPage(mockReq, mockResp);
 		

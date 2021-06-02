@@ -42,7 +42,7 @@ public class OrderDetailController {
 		}
 		req.setAttribute("order", order);
 		
-		if (!checkAccess(order, ((Person)req.getSession().getAttribute("personLoggedIn")), req)) {
+		if (!Utils.checkAccess(order, ((Person)req.getSession().getAttribute("personLoggedIn")), req)) {
 			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, String.format(Constants.ORDER_NOT_FOUND, orderid));
 			return null;
 		}
@@ -53,18 +53,4 @@ public class OrderDetailController {
 		return "App/orderdet";
 	}
 	
-	private boolean checkAccess(Order order, Person person, HttpServletRequest req) {
-		
-		// Order is requested by the same user
-		if (order.getPerson().getUsername().equals(person.getUsername())) {
-			return true;
-		}
-		
-		// Admin allowed to view all orders
-		if (person.getAdmin() == 1) {
-			return true;
-		}
-		
-		return false;
-	}
 }

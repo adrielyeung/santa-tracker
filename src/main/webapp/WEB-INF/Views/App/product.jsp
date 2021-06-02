@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="UTF-8" isELIgnored="false"%>
+	pageEncoding="ISO-8859-1" isELIgnored="false"%>
 	
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
@@ -37,7 +37,7 @@
 <div class="tg-wrap"><table id="tg-R6anf" class="tg">
   <thead>
 	  <tr>
-	    <th class="tg-0lax">Product ID</th>
+	    <th class="tg-0lax">Product #</th>
 	    <th class="tg-0lax">Name</th>
 	    <th class="tg-0lax">Spec</th>
 	    <th class="tg-0lax">Unit price</th>

@@ -37,6 +37,11 @@ public class ProductController {
 			return null;
 		}
 		
+		if (((Person) req.getSession().getAttribute("personLoggedIn")).getDemo() == 1) {
+			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, Constants.DEMO_ACCESS_DENIED);
+			return null;
+		}
+		
 		if (((Person) req.getSession().getAttribute("personLoggedIn")).getAdmin() == 0) {
 			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, Constants.ACCESS_DENIED);
 			return null;
@@ -58,6 +63,11 @@ public class ProductController {
 		
 		if (((Person) req.getSession().getAttribute("personLoggedIn")).getAdmin() == 0) {
 			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, Constants.ACCESS_DENIED);
+			return null;
+		}
+		
+		if (((Person) req.getSession().getAttribute("personLoggedIn")).getDemo() == 1) {
+			Redirections.redirect(req, resp, Constants.DASHBOARD, Constants.DASHBOARD_ERR, Constants.DEMO_ACCESS_DENIED);
 			return null;
 		}
 		
@@ -86,7 +96,7 @@ public class ProductController {
 			return null;
 		}
 		
-		List<Product> products = productService.getAllProducts();
+		List<Product> products = productService.getAllProducts(((Person) req.getSession().getAttribute("personLoggedIn")).getDemo());
 		
 		req.getSession().setAttribute("products", products);
 		

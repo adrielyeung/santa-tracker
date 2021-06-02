@@ -20,8 +20,8 @@ public class MessageService {
 	@Autowired
 	private OrderRepository orderRepository;
 	
-	public List<Message> getAllMessages() {
-		return messageRepository.findAll();
+	public List<Message> getAllMessages(int demo) {
+		return messageRepository.findAllMessagesByOrderDemo(demo);
 	}
 	
 	public Message getMessageById(Integer messageID) throws ResourceNotFoundException {

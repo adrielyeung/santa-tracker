@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="UTF-8" isELIgnored="false"%>
+	pageEncoding="ISO-8859-1" isELIgnored="false"%>
 	
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
@@ -30,10 +30,11 @@
 </div>
 
 <div class="content">
+<span style="color:red;">${dashboardErrMsg}</span>
 <c:if test='${personLoggedIn.admin == 0}'>
   <h2>Recent orders</h2>
   <p>Here are your recent orders. Click on their Order IDs to show more details.</p><br>
-  <span style="color:red;">${dashboardErrMsg}</span>
+  
 
 <div class="tg-wrap"><table id="tg-R6anf" class="tg">
   <tr>
@@ -78,7 +79,7 @@
 	    					<c:otherwise>
 							<c:choose>
 								<c:when test='${personLoggedIn.admin == 0}'>You</c:when>
-								<c:when test='${personLoggedIn.admin == 1}'>Customer</c:when>
+								<c:when test='${personLoggedIn.admin == 1}'>#${msg.order.person.personID} - ${msg.order.person.username}</c:when>
 							</c:choose>
 							</c:otherwise></c:choose></td>
 	    <td class="tg-0lax">${msg.title}</td>
